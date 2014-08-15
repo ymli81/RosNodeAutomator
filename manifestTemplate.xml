@@ -1,0 +1,13 @@
+<package>
+  <description brief="$PKG$">
+     $PKG$
+  </description>
+  <author>Danying Hu</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/test</url>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  $DEPs$
+
+</package>
