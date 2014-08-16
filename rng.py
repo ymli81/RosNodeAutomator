@@ -166,28 +166,44 @@ print('got system parameters')
 
 ##########################################################################
 #  Query user for details
+print "------------------- Ros Node Builder ----------------------"
+if ros_build_system == 'catkin':
+  print "                     (catkin) "
+else:
+  print "                    (rosbuild)"
+  
 ##  Package name ## 
-pkg = raw_input('Enter your new package name: ') or pkg
+pkg = raw_input('Enter your package name: ') or pkg
 path = rws+pkg
+# I think we should flag an error if package does not already exist
 if not os.path.exists(path):
-    os.makedirs(path)
-
-##  Node name ## 
-default = pkg + '_node'
-node_name = raw_input('Enter your new node name: ['+ default + ']: ') or default
+  print "This package path does not exist: "+path
+  exit(0)
+    #os.makedirs(path)
 
 ##  Language ## 
 lang = raw_input('Enter your language: [Python or C++]: ') or lang
 while 1 : 
   if lang[0]=='C' or lang[0]=='c':
      lang = 'C++'
+     lang_suff = '.cpp'
      break
   elif lang[0]=='P' or lang[0]=='p':
        lang = 'Python'
+       lang_suff = '.py'
        break
   else:
     lang = raw_input('Unknown Language, please re-enter the language type: [Python or C++]: ') or lang
 
+##  Node name ## 
+default = pkg + '_node'
+node_name = raw_input('Enter your new node name: ['+ default + ']: ') or default
+if os.path.exists(path+node_name+lang_suff):
+  response = raw_input('node file '+path+node+lang_suff+' already exists.  Are you sure? (Y) ') or 'Y'
+  if response != 'Y':
+    print 'exiting, please try again'
+    exit(0)
+    
 # initialize strings for output
 sub = ''
 sub_object  = ''

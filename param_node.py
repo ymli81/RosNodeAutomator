@@ -1,7 +1,11 @@
 # ros node generator parameter file
 
 #  Start by reading and editing this file.   When done, save this and run:
-#  > ros_node
+#  > ./rng.py
+
+# Which ROS build system are you going to use?
+#ros_build_system='rosbuild'
+ros_build_system='catkin'
 
 # path to your ROS workspace
 rws = '/home/danying/ROSWorkspace/ros_node_generator/'
