@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 import os, sys
 from readmsgsrv import ros_files
+from text_elements import *
 
 print ('Welcome to ROS node generator  **3**')
 print ('Please answer a few questions about your new node:')
+print ('Test:  publisher for C++ : '+publisher['C++'])
 
 ################### Function Definition ##########################################################
 ### func: replace the tags in a string (i.e. one line of source code)
@@ -174,7 +176,7 @@ else:
   
 ##  Package name ## 
 pkg = raw_input('Enter your package name: ') or pkg
-path = rws+pkg
+path = rws+'src/'+pkg
 # I think we should flag an error if package does not already exist
 if not os.path.exists(path):
   print "This package path does not exist: "+path
@@ -237,54 +239,6 @@ msg_gen = ""
 srv_gen = ""
 executable = ""
 msgs_var_list = ""
-
-#####  These are text elements for both languages
-subscriber = {'Python' : '$SOB$ = rospy.Subscriber("$TPC$", $MSG$, $CLB$)\n  ',
-              'C++'    : 'ros::Subscriber $SOB$ = nh.subscribe("$TPC$", 1000, $CLB$);\n',
-             }
-tmpstr = '''void $CLB$(const $PGD$::$MSG$ConstPtr& $MSG$) {
- 		        ROS_INFO("$RNN$: I got message on topic '$TPC$'");
-  		    }\n
-		      '''
-callback = {'Python': '''def $CLB$($MSG$): rospy.loginfo("$RNN$: I got message on topic '$TPC$")\n''',
-            'C++': tmpstr
-  	       }
-publisher =  {'Python': '$POB$  = rospy.Publisher("$TPC$",$MSG$)\n  ',
-              'C++':  'ros::Publisher $POB$ = nh.advertise<$PGD$::$MSG$>("$TPC$", 1000);\n',
-             }
-
-pubcalls = {'Python' : '$POB$.publish($MOB$)\n    ',
-            'C++' : '$POB$.publish($MOB$);\n  '}
-
-imports =  {'Python': 'from $PGD$.msg import $MSG$\n',
-            'C++':'#include "$PGD$/$MSG$.h"\n'
-           }
-advertisers = {'Python' : '''rospy.Service("$SNM$", $PKG$.srv.$SNM$, $CLB$)\n''',
-               'C++' : '''ros::ServiceServer service = nh.advertiseService("$SNM$", $CLB$)\n '''}
-
-tmpstr = '''  ros::service::waitForService("$SNM$", -1)
- 			  ros::ServiceClient $SPT$ = nh.serviceClient<$PKG$::$SNM$>("$SNM$")
-              $PKG$::$SNM$ $SPT$
-              $SPT$.arg1 =
-              $SPT$.arg2 =
-'''
-servinits  = {'Python' : '''rospy.wait_for_service("$SNM$")\n$SPT$ = rospy.ServiceProxy("$SNM$", $SNM$)\n''',
-               'C++' : tmpstr}
-
-servcalls  = {'Python' : '''result = $SPT$(<<service args>>)\n''',
-               'C++' : '''result = $SPT$.call(<<service args>>)\n '''}
-
-#text elements for message objects in .cpp file, TODO check python msgs
-msgs = { 'Python':'$MOB$ = $MSG$()\n  ',
-		     'C++': '$PGD$::$MSG$ $MOB$;\n'
-	     }
-
-#### text elements for manifest.xml  ###
-depend = '<depend package="$PGD$"/>\n  '
-
-#### text elements for .msg file ######
-msv_list = '$TYP$       $VAR$\n'
-
 
 pub_num = 0
 sub_num = 0

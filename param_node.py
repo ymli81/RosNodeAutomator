@@ -9,6 +9,7 @@ ros_build_system='catkin'
 
 # path to your ROS workspace
 rws = '/home/danying/ROSWorkspace/ros_node_generator/'
+rws = '/home/blake/Projects/Ros2/RosNodeGen/'
 # name of ROS package
 pkg = 'my_test_package'
 # package text description
