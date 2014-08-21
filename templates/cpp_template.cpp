@@ -30,11 +30,12 @@ $PUBs$
 $SADs$
 $SCIs$
 
-////////////// Message Object for Publish
+////////////// Message Objects
 $MOBs$
-
-////////////// TODO: Assign values to the message objs
-
+$MSVs$
+////////////// Service objects
+$SROs$
+$SVVs$
 
 
 while(ros::ok()) {

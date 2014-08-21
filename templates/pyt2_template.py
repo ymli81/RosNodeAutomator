@@ -46,10 +46,13 @@ if __name__ == '__main__':
   $SCIs$
 
 
-############# Message Object for Publish ####################
-### TODO: Assign values to the message objs
+############# Message Object for Publisher ####################
   $MOBs$
+  $MSVs$
 
+############# Service Object for client ####################
+  $SROs$
+  $SVVs$
 ##############################################################
 ##  Main loop start
   while not rospy.is_shutdown():

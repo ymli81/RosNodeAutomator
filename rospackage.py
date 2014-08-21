@@ -38,12 +38,37 @@ class ros_package():
     self.gen_mkfile()
 
   def get_package_msgs(self):
-    ## do stuff
-    return self.msg_list
+    msgdir = self.package_path+'/msg'
+    if os.path.exists(msgdir): 
+      try: 
+        message_list = os.listdir(msgdir)
+        i = 0
+        sub = '.msg'
+        for l in message_list:
+          if sub in l:
+            i +=1
+            self.msg_list.append(l)
+      except:
+        self.msg_list = []
+    else:
+        self.msg_list = []
 
   def get_package_srvs(self):
-    ## do stuff
-    return self.srv_list
+    srvdir = self.package_path+'/srv'
+    if os.path.exists(srvdir): 
+      try: 
+        service_list = os.listdir(msgdir)
+        i = 0
+        sub = '.srv'
+        for l in srv_list:
+          if sub in l:
+            i +=1
+            self.srv_list.append(l)
+      except:
+        self.srv_list = []
+    else:
+      self.srv_list = []
+
 
   def get_dependency_list(self):
     try:
@@ -132,20 +157,32 @@ class ros_package():
          outfile.write(text.sectsub(text.tagsub(line)))
 
   def gen_msg(self,msg_name):
-    print('start to generate the '+msg_name+'.msg file')
-    #if flag == 0:
-       #text.msgs_var_list = ''
     if not os.path.exists(self.package_path+'/'+'msg'): 
       os.makedirs(self.package_path+'/'+'msg')
     self.msg_list = os.listdir(self.package_path+'/'+'msg')
-    if not msg_name+'.msg' in self.msg_list:
-      with open('templates/msgTemplate.msg', 'r') as mfile:    
-        m_template = mfile.readlines()
-      with open(self.package_path+'/'+'msg''/'+msg_name+'.msg', 'w') as outfile: 
-        for line in m_template:
+    while self.check_msg_name(msg_name):
+      msg_name = raw_input('Message file exists already, please use another name: ') or msg_name
+    print('start to generate the '+msg_name+'.msg file')
+    with open('templates/msgTemplate.msg', 'r') as mfile:    
+      m_template = mfile.readlines()
+    with open(self.package_path+'/'+'msg''/'+msg_name+'.msg', 'w') as outfile: 
+      for line in m_template:
 	      outfile.write(text.sectsub(text.tagsub(line)))
-    else:
-      print('Message file exists already, please use another name')
+
+
+  def gen_srv(self,srv_name):
+    if not os.path.exists(self.package_path+'/'+'srv'): 
+      os.makedirs(self.package_path+'/'+'srv')
+    self.srv_list = os.listdir(self.package_path+'/'+'srv')
+    while self.check_srv_name(srv_name):
+      srv_name = raw_input('Service file exists already, please use another name: ') or srv_name
+    print('start to generate the '+srv_name+'.srv file')
+    with open('templates/srvTemplate.srv', 'r') as sfile:
+      s_template = sfile.readlines()
+    with open(self.package_path+'/'+'srv''/'+srv_name+'.srv', 'w') as outfile: 
+      for line in s_template:
+	      outfile.write(text.sectsub(text.tagsub(line)))
+
 
   def add_node(self,node):
     if node.lang == 'C++':
@@ -175,19 +212,65 @@ class ros_package():
     else:
       return 1
 
+  def check_msg_name(self, msg_name):
+     self.get_package_msgs()
+     if msg_name+'.msg' in self.msg_list:
+       return 1
+     else:
+       return 0
+
+  def check_srv_name(self, srv_name):
+     self.get_package_srvs()
+     if srv_name+'.srv' in self.srv_list:
+       return 1
+     else:
+       return 0
+
   def edit_custom_msg(self):
-    text.msgs_var_list = ''
+    text.msg_var_list = ''
     var_num = 0
     text.var_type = 'int32'
     while 1:
       res = raw_input('Do you want to add a variable into your message file? (y for yes, n/CR for no) ') or -1
       if (res == -1) or (res[0]=='n') or (res[0] == 'N'):
+        print('Do not forget to edit the .msg file before compile')
         break
       else:
         var_num += 1
         text.var_type = raw_input('What is the type of your message variable '+str(var_num)+', [default: '+text.var_type+']') or text.var_type
         text.msv = 'my_message_var'+ str(var_num)
-        text.msgs_var_list = text.msgs_var_list + text.tagsub(text.msv_list)
+        text.msg_var_list = text.msg_var_list + text.tagsub(text.msv_list)
+
+  def edit_custom_srv(self):
+    text.srv_var_list = ''
+    var_num = 0
+    text.var_type = 'int32'
+    while 1:
+      res = raw_input('Do you want to add a variable into your srv file? (y for yes, n/CR for no) ') or -1
+      if (res == -1) or (res[0]=='n') or (res[0] == 'N'):
+        print('Do not forget to edit the .srv file before compile')
+        break
+      else:
+        while 1:
+          req = raw_input('Enter the type of request variable '+str(var_num+1)+', [default: '+text.var_type+'], (n for stop)') or text.var_type
+          if (req[0]=='n') or (req[0] == 'N'):
+            break
+          else:
+            var_num += 1
+            text.msv = 'my_request_var'+ str(var_num)
+            text.srv_var_list = text.srv_var_list + text.tagsub(text.srv_list)
+
+        text.srv_var_list = text.srv_var_list + '---\n'
+        var_num = 0
+        while 1:
+          req = raw_input('Enter the type of response variable '+str(var_num+1)+', [default: '+text.var_type+'], (n for stop)') or text.var_type
+          if (req[0]=='n') or (req[0] == 'N'):
+            break
+          else:
+            var_num += 1
+            text.msv = 'my_response_var'+ str(var_num)
+            text.srv_var_list = text.srv_var_list + text.tagsub(text.srv_list)
+      break
         
 
 if __name__ == '__main__':

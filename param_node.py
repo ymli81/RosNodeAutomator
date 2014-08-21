@@ -30,9 +30,6 @@ srv_flag = 0
 # name of one of the variables defined in the message (ideally a string)
 # if you have more than one variable (such as from multiple .msg files),
 # you will need to add those manually
-# msv = 'my_message_var'
-
-
 
 ### Services
 # name of  .srv file for your service (found in ~/package/srv/)

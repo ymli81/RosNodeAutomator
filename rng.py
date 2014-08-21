@@ -22,7 +22,7 @@ rospkg.create_package_folder()
 ## Node name ##
 node_name = pkg + '_node'
 node_name = raw_input('Enter your new node name: ['+node_name+ ']: ') or node_name
-while(rospkg.check_node_name(node_name)):
+while rospkg.check_node_name(node_name):
   node_name = raw_input('ROS node ['+node_name+'] exists in package '+pkg+', enter another name:') or node_name
 
 ## Language ##
@@ -58,23 +58,27 @@ while 1:
   pkgd = 'std_msgs'
   pkgd = raw_input('Enter the package that contains your message, default package: [ '+pkgd+' ]') or pkgd
   a = ros_files(pkgd)
-  a.find_msgs()
+  a.get_package_path()
+  if not a.package_found and pkg==pkgd:
+    a.set_package_path(rospkg.package_path)
+  a.list_msgs()
   msg = ''
   idx = 0
   if a.message_list:
      idx = raw_input('Enter the index of message you want to '+direction+': ')
      idx = int(idx)
   else:
-    if direction == 'subscribe':   
+    if direction == 'subscribe':  
+      print('You cannot subscribe to nonexisting message') 
       direction ='unknown'
    
   if direction == 'publish':
-    if not idx > len(a.message_list) and a.message_list:
+    if not idx > len(a.message_list) and idx >0 and a.message_list:
       msg = a.message_list[idx-1]
       end = msg.find('.msg')
       msg = msg[0:end]
       msg_flag = 0
-    elif idx > len(a.message_list) and a.message_list:
+    elif (idx > len(a.message_list) or idx == 0) and a.message_list:
       msg = raw_input('Unknown message, creating a custom message in package '+ pkg+'. Name your message: ')
       pkgd = pkg
       rospkg.msg_flag = 1
@@ -108,8 +112,74 @@ while 1:
   rospkg.add_dependency(pkgd)
 
 ## Services ##
+while 1:
+  resp = raw_input('Do you want to add a service? (y for yes, n/CR for no) ') or -1
+  if (resp == -1) or (resp[0]=='n') or (resp[0] == 'N '):
+    break
+  direction = raw_input('[C]lient or [S]erver?: ')
+  while 1 : 
+    if direction[0]=='C' or direction[0]=='c':
+      direction = 'client'
+      break
+    elif direction[0]=='S' or direction[0]=='s':
+      direction = 'server'
+      break
+    else:
+      direction = raw_input('Unknown service handle, [C]lient or [S]erver?: ') or direction
+  
+  pkgd = raw_input('Enter the package that contains your service, default package: [ '+pkg+' ]') or pkg
+  a = ros_files(pkgd)
+  a.get_package_path()
+  if not a.package_found and pkg==pkgd:
+    a.set_package_path(rospkg.package_path)
+  a.list_srvs()
+  srv = ''
+  idx = 0
+  if a.service_list:
+     idx = raw_input('Enter the index of service type you want to use: ')
+     idx = int(idx)
+  else:
+     if direction == 'server': 
+       print('You cannot use a nonexisting service type')
+       direction = 'unknown'
+   
+  if direction == 'client':
+    if not idx > len(a.service_list) and idx>0 and a.service_list :
+      srv = a.service_list[idx-1]
+      end = srv.find('.srv')
+      srv = srv[0:end]
+      srv_flag = 0
+    elif (idx > len(a.service_list) or idx == 0) and a.service_list:
+      srv = raw_input('Unknown service type, creating a custom service type in package '+ pkg+'. Name your service type: ')
+      pkgd = pkg
+      rospkg.srv_flag = 1
+      srv_flag = 1
+    else:
+      srv = raw_input('Empty service list, creating a custom service type in package '+ pkg+'. Name your service type: ')
+      pkgd = pkg
+      rospkg.srv_flag = 1
+      srv_flag = 1
+    srv_name = srv+'_name'
+    srv_name = raw_input('Enter the name of your service: default ['+srv_name+']') or srv_name
+    if srv_flag:
+      rospkg.edit_custom_srv()
+      rospkg.gen_srv(srv)
+    rosnd.add_client(pkgd,srv,srv_name)
 
-
+  elif direction == 'server':
+    while idx > len(a.service_list):
+      idx = raw_input('Unknown service type, please re-enter the index of service you want to use: ') or idx
+      idx = int(idx)
+    srv = a.service_list[idx-1]
+    end = srv.find('.srv')
+    srv = srv[0:end]
+    srv_name = srv+'_name'
+    srv_name = raw_input('Enter the name of your service: default ['+srv_name+']') or srv_name
+    cb_name =  srv +'CB'
+    cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
+    rosnd.add_server(pkgd,srv,srv_name,cb_name)
+  
+  rospkg.add_dependency(pkgd)
 
 
 ####################### Generate basic files ###########################
