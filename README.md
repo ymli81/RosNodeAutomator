@@ -9,6 +9,7 @@ Features:
 - steps for creating custom msg
 - steps for creating custom srv
 - robust to user input: dealing with random inputs
-- fixed bugs 
 - python and C++ 
+- auto generation/update CMakelist.txt
+- auto generation/update manifest.xml
 
