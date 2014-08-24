@@ -57,7 +57,7 @@ while 1:
       direction = raw_input('Unknown message direction, enter [P]ublish or [S]ubscribe?:') or direction
   
   pkgd = pkg 
-  pkgresp = raw_input('Enter the package that contains your message [ '+pkgd+' ]') or pkgd
+  pkgresp = raw_input('Enter the package that contains your message ['+pkgd+']') or pkgd
   a = ros_files(pkgresp)
   a.get_package_path()
   

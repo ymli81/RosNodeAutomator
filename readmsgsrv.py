@@ -19,25 +19,22 @@ class ros_files():
   
   def get_package_path(self):
     try:
+      print 'getting path for package: ['+self.package_name+']'
       self.package_path = self.rospack.get_path(self.package_name)
-      self.msg_path = self.package_path + 'src/' + pkg + 'msg/'
-      self.srv_path = self.package_path + 'src/' + pkg + 'srv/'
+      print 'Found package path: '+self.package_path
+      self.msg_path = self.package_path + '/msg/'
+      self.srv_path = self.package_path + '/srv/'
       self.package_found = True
-    except:
-      print 'Could "rospack.get_path" of package: '+self.package_name
+    except Exception as exc:
+      name_of_exception = type(exc).__name__
+      print 'Could not "rospack.get_path" of package: '+self.package_name
+      print 'Ros exception: '+name_of_exception
       self.package_found = False
       self.msg_path = "<<error!>>"
 
   def set_package_path(self,path):
     self.package_path = path
     self.package_found = True
-
-
-  #def set_msg_path(self, pth):
-    #self.msg_path = pth
-    
-  #def set_srv_path(self, pth):
-    #self.srv_path = pth
 
   def find_msgs(self):
     if self.package_found:
