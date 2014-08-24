@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os, sys
 import text
 from readmsgsrv import ros_files
@@ -179,16 +180,18 @@ class ros_node:
     text.srv_init_list = self.srv_init_list
     text.pkg = self.get_package_name()
     if self.lang == 'C++':
-      filename = self.node_name +'.cpp'
+      codefilename = self.node_path+'/'+self.node_name +'.cpp'
       with open('templates/cpp_template.cpp') as file:
         filetemplate = file.readlines()
     elif self.lang == 'Python':
-      filename = self.node_name +'.py'
+      if not os.path.exists(self.node_path+'/scripts/'):  # make scripts directory if not there
+        os.mkdir(self.node_path+'/scripts/')
+      codefilename = self.node_path+'/scripts/'+self.node_name +'.py'
       with open('templates/pyt2_template.py') as file:
         filetemplate = file.readlines()
     else:
       print('Unknown languange')
-    with open(self.node_path+'/'+filename, 'w') as outfile:
+    with open(codefilename, 'w') as outfile:
       for line in filetemplate:
         outfile.write(text.sectsub(text.tagsub(line)))
       

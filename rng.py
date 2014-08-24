@@ -164,20 +164,20 @@ while 1:
       srv = a.service_list[idx-1]
       end = srv.find('.srv')
       srv = srv[0:end]
-      srv_flag = 0
+      custom_srv_flag = 0
     elif (idx > len(a.service_list) or idx == 0) and a.service_list:
       srv = raw_input('Unknown service type, creating a custom service type in package '+ pkg+'. Name your service type: ')
       pkgd = pkg
       rospkg.srv_flag = 1
-      srv_flag = 1
+      custom_srv_flag = 1
     else:
       srv = raw_input('Empty service list, creating a custom service type in package '+ pkg+'. Name your service type: ')
       pkgd = pkg
       rospkg.srv_flag = 1
-      srv_flag = 1
+      custom_srv_flag = 1
     srv_name = srv+'_name'
     srv_name = raw_input('Enter the name of your service: default ['+srv_name+']') or srv_name
-    if srv_flag:
+    if custom_srv_flag:
       rospkg.edit_custom_srv()
       rospkg.gen_srv(srv)
     rosnd.add_client(pkgd,srv,srv_name)

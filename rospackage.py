@@ -27,7 +27,8 @@ class ros_package():
 
   def set_package_name(self,name):
     self.package_name = name
-    self.package_path = self.rws + '/src/' + self.package_name
+    if self.rws != '':
+      self.package_path = self.rws + '/src/' + self.package_name
   
   def set_package_rws(self,rws):
     self.rws = rws
@@ -38,7 +39,7 @@ class ros_package():
       print('Please set your workspace')
     else:
       if not os.path.exists(self.package_path):
-        print('Package does not exist, creating a new package with name '+self.packag_path+self.package_name)
+        print('Package does not exist, creating a new package with name '+self.package_path+self.package_name)
         os.makedirs(self.package_path)
     #  'makefile' only needed for ros_build
     self.gen_mkfile()
