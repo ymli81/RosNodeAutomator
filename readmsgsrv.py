@@ -115,9 +115,9 @@ class ros_files():
            tmp = srvfile.readlines()
          res_flag = 0
          for l in tmp:
-           if l.startswith('#'): print('this is a comment line')
+           if l.startswith('#'): #print('this is a comment line')
            elif l.startswith('---'): res_flag = 1
-           elif l.startswith('\n'): print('this is an empty line') 
+           elif l.startswith('\n'): #print('this is an empty line') 
            else:
              tline = l.split(' ')
              ttype = tline[0]

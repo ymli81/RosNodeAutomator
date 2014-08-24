@@ -11,8 +11,8 @@ class ros_package():
     self.rws = rws
   #  self.package_path = rws+'/'+name  # is this rosbuild style?
     self.package_path = rws+'/src/'+name  # catkin style
-    self.msg_path = self.rws + '/msg'   # see (http://wiki.ros.org/Packages)
-    self.srv_path = self.rws + '/srv'
+    self.msg_path = self.package_path + '/msg'
+    self.srv_path = self.package_path + '/srv'
     self.node_list = []   #node list from CMakelist.txt
     self.msg_list = []
     self.srv_list = []
@@ -253,9 +253,10 @@ class ros_package():
         break
       else:
         var_num += 1
-        text.var_type = raw_input('What is the type of your message variable '+str(var_num)+', [default: '+text.var_type+']') or text.var_type
         text.msv = 'my_message_var'+ str(var_num)
-        text.msg_var_list = text.msg_var_list + text.tagsub(text.msv_list)
+        print 'New message variable: '+text.msv
+        text.var_type = raw_input('New message variable type? [default: '+text.var_type+']') or text.var_type
+        text.msg_var_list = text.msg_var_list + text.tagsub(text.msv_list_element)
 
 # ros_build AND catkin
   def edit_custom_srv(self):
@@ -275,10 +276,11 @@ class ros_package():
           else:
             var_num += 1
             text.msv = 'my_request_var'+ str(var_num)
-            text.srv_var_list = text.srv_var_list + text.tagsub(text.srv_list)
+            text.srv_var_list = text.srv_var_list + text.tagsub(text.srv_list_element)
 
         text.srv_var_list = text.srv_var_list + '---\n'
         var_num = 0
+        print '---'
         while 1:
           req = raw_input('Enter the type of response variable '+str(var_num+1)+', [default: '+text.var_type+'], (n for stop)') or text.var_type
           if (req[0]=='n') or (req[0] == 'N'):
@@ -286,7 +288,7 @@ class ros_package():
           else:
             var_num += 1
             text.msv = 'my_response_var'+ str(var_num)
-            text.srv_var_list = text.srv_var_list + text.tagsub(text.srv_list)
+            text.srv_var_list = text.srv_var_list + text.tagsub(text.srv_list_element)
       break
         
 

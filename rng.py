@@ -40,7 +40,10 @@ while 1 :
 
 rosnd = ros_node(node_name,lang,rospkg.package_path)
 
-## Messages ##
+
+########################################################################################
+#
+#                           Get and process the Messages
 while 1:
   resp = raw_input('Do you want to add a message? (y for yes, n/CR for no) ') or -1
   if (resp == -1) or (resp[0]=='n') or (resp[0] == 'N '):
@@ -66,34 +69,34 @@ while 1:
   a.list_msgs()
   msg = ''
   idx = 0
-  if a.message_list:
-     idx = raw_input('Enter the index of message you want to '+direction+': ')
+  if a.message_list:  # we have found messages
+     idx = raw_input('Select message by number: ')
      idx = int(idx)   #  careful: a python 'feature' is that entering a decimal ('2.0') will break this!
-  else:
+  else:   # no messages found
+    idx = 0
     if direction == 'subscribe':  
       print('You cannot subscribe to nonexisting message') 
       direction ='unknown'
    
+  # now we have some message 
   if direction == 'publish':
-    if not idx > len(a.message_list) and idx >0 and a.message_list:
+    if (not idx > len(a.message_list)) and (idx >0) and (a.message_list): # we have a valid message selection
       msg = a.message_list[idx-1]
       end = msg.find('.msg')
       msg = msg[0:end]
-      msg_flag = 0
-    elif (idx > len(a.message_list) or idx == 0) and a.message_list:
-      msg = raw_input('Unknown message, creating a custom message in package '+ pkg+'. Name your message: ')
-      pkgd = pkg
-      rospkg.msg_flag = 1
-      msg_flag = 1
+      custom_msg_flag = 0
     else:
-      msg = raw_input('Empty message list, creating a custom message in package '+ pkg+'. Name your message: ')
+      msg = raw_input('Empty or unknown message list, creating a custom message in package '+ pkg+'. Name your message: ')
       pkgd = pkg
       rospkg.msg_flag = 1
-      msg_flag = 1
+      custom_msg_flag = 1
    
+   #############################################################
+   #
+   #     Get and process the topic for each publisher message
     topic = msg+'_topic'
     topic = raw_input('Enter the topic of your message: default ['+topic+']') or topic
-    if msg_flag:
+    if custom_msg_flag:  
       rospkg.edit_custom_msg()
       rospkg.gen_msg(msg)
     rosnd.add_publisher(pkgd,msg,topic)
@@ -105,15 +108,24 @@ while 1:
     msg = a.message_list[idx-1]
     end = msg.find('.msg')
     msg = msg[0:end]
+
+   #############################################################
+   #
+   #     Get and process the topic for each subscriber message    
     topic = msg+'_topic'
     topic = raw_input('Enter the topic of your message: default ['+topic+']') or topic
     cb_name =  msg+'CB'
     cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
     rosnd.add_subscriber(pkgd,msg,topic,cb_name)
   
+  # this might be a dependency on own package (check?)
   rospkg.add_dependency(pkgresp)    
 
-## Services ##
+
+
+########################################################################################
+#
+#                           Get and process the Services
 while 1:
   resp = raw_input('Do you want to add a service? (y for yes, n/CR for no) ') or -1
   if (resp == -1) or (resp[0]=='n') or (resp[0] == 'N '):
@@ -129,20 +141,22 @@ while 1:
     else:
       direction = raw_input('Unknown service handle, [C]lient or [S]erver?: ') or direction
   
-  pkgd = raw_input('Enter the package that contains your service, default package: [ '+pkg+' ]') or pkg
-  a = ros_files(pkgd)
+  pkgd = pkg  
+  pkgresp = raw_input('Enter the package that contains your service, default package: [ '+pkgd+' ]') or pkgd
+  a = ros_files(pkgresp)
   a.get_package_path()
-  if not a.package_found and pkg==pkgd:
+  
+  if not a.package_found and pkg==pkgresp:
     a.set_package_path(rospkg.package_path)
   a.list_srvs()
   srv = ''
   idx = 0
   if a.service_list:
-     idx = raw_input('Enter the index of service type you want to use: ')
-     idx = int(idx)
+     idx = raw_input('Select service by number: ')
+     idx = int(idx)  #  careful: a python 'feature' is that entering a decimal ('2.0') will break this!
   else:
      if direction == 'server': 
-       print('You cannot use a nonexisting service type')
+       print('You cannot serve a nonexisting service type')
        direction = 'unknown'
    
   if direction == 'client':
@@ -181,7 +195,7 @@ while 1:
     cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
     rosnd.add_server(pkgd,srv,srv_name,cb_name)
   
-  rospkg.add_dependency(pkgd)
+  rospkg.add_dependency(pkgresp)
 
 
 ####################### Generate basic files ###########################
