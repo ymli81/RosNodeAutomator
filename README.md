@@ -8,12 +8,12 @@ File Description
 - text.py: defines texts and functions for generating the files. 
 
 How to Use:
-1. Run rng.py and follow the instruction to generate the node.
-2. the program checks the workspace and will create a new rospackage if the given package name is not found
-3. the program checks the name of rosnodes in the given package, a new node name is asked if the given node name is found.
-4. To generate the custom msg/srv: enter any index number that is not showing in the msg/srv list or if the msg/srv is empty
-5. For editing the custom msg/srv: answer the questions when enter that step or you can choose to edit that later.
-6. After finishing: roscd into the package, and make. the package should be able to compile w/o error.
+- Run rng.py and follow the instruction to generate the node.
+- the program checks the workspace and will create a new rospackage if the given package name is not found
+- the program checks the name of rosnodes in the given package, a new node name is asked if the given node name is found.
+- To generate the custom msg/srv: enter any index number that is not showing in the msg/srv list or if the msg/srv is empty
+- For editing the custom msg/srv: answer the questions when enter that step or you can choose to edit that later.
+- After finishing: roscd into the package, and make. the package should be able to compile w/o error.
 
 
 RosNodeGen
