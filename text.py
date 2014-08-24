@@ -1,3 +1,5 @@
+# text elements for ros node generator
+
 ### tag general
 pkg = node_name = pkgd = ''
 ### tags message

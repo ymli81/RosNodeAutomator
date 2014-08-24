@@ -2,8 +2,9 @@ import os, sys
 import text
 from readmsgsrv import ros_files
 
-class ros_node():
+class ros_node:
   def __init__(self,name = '',lang = 'C++',path = ''):
+    self.package = ''
     self.node_name = name
     self.lang = lang
     self.node_path = path
@@ -28,6 +29,7 @@ class ros_node():
   def get_package_name(self):
     path = self.node_path.split('/')
     name = path[len(path)-1]
+    self.package = name
     return name
 
   def add_includes_for_msg(self,pkgd,msg):
@@ -193,11 +195,14 @@ class ros_node():
 
 if __name__ == '__main__':
 
-   a = ros_node('cc','Python','/home/danying/ROSWorkspace/ros_node_generator/srvtest')
-   a.add_publisher('pc','test','pusfsd')
-   a.add_client('srvtest','custom','lunch')
+   rws = '/home/blake/Projects/Ros2/RosNodeGen/'
+
+   #a = ros_node('cc','Python','/home/danying/ROSWorkspace/ros_node_generator/srvtest')
+   a = ros_node('cc','Python',rws+'srvtest')
+   #a.add_publisher('pc','test','pusfsd')
+   #a.add_client('srvtest','custom','lunch')
    #a.add_client('srvtest','custom','dinner')
    #a.add_server('srvtest','custom','dinner','dinnercallback')
-   a.add_server('srvtest','custom','lunch','lunchcallback')
-   a.gen_node_source()
+   #a.add_server('srvtest','custom','lunch','lunchcallback')
+   #a.gen_node_source()
    

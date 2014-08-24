@@ -7,6 +7,8 @@ class ros_files():
     self.rospack = rospkg.RosPack()
     self.package_name = pkg
     self.package_path = ''
+    self.msg_path = ''
+    self.srv_path = ''
     self.message_list = []
     self.service_list = []
     self.action_list = []
@@ -18,20 +20,30 @@ class ros_files():
   def get_package_path(self):
     try:
       self.package_path = self.rospack.get_path(self.package_name)
+      self.msg_path = self.package_path + 'src/' + pkg + 'msg/'
+      self.srv_path = self.package_path + 'src/' + pkg + 'srv/'
       self.package_found = True
     except:
+      print 'Could "rospack.get_path" of package: '+self.package_name
       self.package_found = False
+      self.msg_path = "<<error!>>"
 
   def set_package_path(self,path):
     self.package_path = path
     self.package_found = True
 
+
+  #def set_msg_path(self, pth):
+    #self.msg_path = pth
+    
+  #def set_srv_path(self, pth):
+    #self.srv_path = pth
+
   def find_msgs(self):
     if self.package_found:
-      msgdir = self.package_path+'/msg'
-      if os.path.exists(msgdir): 
+      if os.path.exists(self.msg_path): 
         try: 
-          message_list = os.listdir(msgdir)
+          message_list = os.listdir(self.msg_path)
           for l in message_list:
             if '.msg' in l:
               self.message_list.append(l)
@@ -40,7 +52,7 @@ class ros_files():
           return 0
         return 1
       else:
-        print('cannot find message files in the package '+self.package_name)
+        print('cannot find message files in the package '+self.msg_path)
         return 0
     else:
       print('ros package '+self.package_name+' does not exist !')
@@ -49,17 +61,16 @@ class ros_files():
   def list_msgs(self):
     if self.find_msgs():
       i = 0
-      print('Find the following messages in the package '+self.package_name+':')
+      print('Find the following messages in the package '+self.msg_path+':')
       for l in self.message_list:
         i +=1
         print(str(i)+': '+l)
 
   def find_srvs(self):
     if self.package_found:
-      srvdir = self.package_path+'/srv'
-      if os.path.exists(srvdir): 
+      if os.path.exists(self.srv_path): 
         try: 
-          service_list = os.listdir(srvdir)
+          service_list = os.listdir(self.srv_path)
           for l in service_list:
             if '.srv' in l:
               self.service_list.append(l)
@@ -68,7 +79,7 @@ class ros_files():
           return 0
         return 1
       else:
-        print('cannot find service files in the package '+self.package_name)
+        print('cannot find service files in the package '+self.srv_path)
         return 0
     else:
       print('ros package '+self.package_name+' does not exist !')
@@ -77,7 +88,7 @@ class ros_files():
   def list_srvs(self):
     if self.find_srvs():
       i = 0
-      print('Find the following services in the package '+self.package_name+':')
+      print('Find the following services in the package '+self.srv_path+':')
       for l in self.service_list:
         i += 1
         print(str(i)+': '+l)

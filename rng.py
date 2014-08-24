@@ -18,6 +18,7 @@ for line in initcode:
 pkg = raw_input('Enter your package name: ') or pkg
 rospkg = ros_package(pkg,rws)
 rospkg.create_package_folder()
+rospkg.set_build_system = ros_build_system
 
 ## Node name ##
 node_name = pkg + '_node'
@@ -53,20 +54,21 @@ while 1:
       direction = 'subscribe'
       break
     else:
-      direction = raw_input('Unknown message handle, [P]ublish or [S]ubscribe?:') or direction
+      direction = raw_input('Unknown message direction, enter [P]ublish or [S]ubscribe?:') or direction
   
-  pkgd = 'std_msgs'
-  pkgd = raw_input('Enter the package that contains your message, default package: [ '+pkgd+' ]') or pkgd
-  a = ros_files(pkgd)
+  pkgd = pkg 
+  pkgresp = raw_input('Enter the package that contains your message [ '+pkgd+' ]') or pkgd
+  a = ros_files(pkgresp)
   a.get_package_path()
-  if not a.package_found and pkg==pkgd:
+  
+  if not a.package_found and pkgd==pkgresp:      #  can you comment this????
     a.set_package_path(rospkg.package_path)
   a.list_msgs()
   msg = ''
   idx = 0
   if a.message_list:
      idx = raw_input('Enter the index of message you want to '+direction+': ')
-     idx = int(idx)
+     idx = int(idx)   #  careful: a python 'feature' is that entering a decimal ('2.0') will break this!
   else:
     if direction == 'subscribe':  
       print('You cannot subscribe to nonexisting message') 
@@ -109,7 +111,7 @@ while 1:
     cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
     rosnd.add_subscriber(pkgd,msg,topic,cb_name)
   
-  rospkg.add_dependency(pkgd)
+  rospkg.add_dependency(pkgresp)    
 
 ## Services ##
 while 1:

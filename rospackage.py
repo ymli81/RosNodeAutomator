@@ -6,11 +6,13 @@ from rosnode import ros_node
 
 class ros_package():
   def __init__(self,name = '',rws = ''):
+    self.build_system = 'ros_build'
     self.package_name = name
     self.rws = rws
-    self.package_path = rws+'/'+name
-    self.msg_path = self.package_path + '/msg'
-    self.srv_path = self.package_path + '/srv'
+  #  self.package_path = rws+'/'+name  # is this rosbuild style?
+    self.package_path = rws+'/src/'+name  # catkin style
+    self.msg_path = self.rws + '/msg'   # see (http://wiki.ros.org/Packages)
+    self.srv_path = self.rws + '/srv'
     self.node_list = []   #node list from CMakelist.txt
     self.msg_list = []
     self.srv_list = []
@@ -20,28 +22,31 @@ class ros_package():
     self.license = ''
     self.email = ''
 
+  def set_build_system(self, bs):
+    self.build_system = bs
+
   def set_package_name(self,name):
     self.package_name = name
-    self.package_path = self.rws + '/' + self.package_name
+    self.package_path = self.rws + '/src/' + self.package_name
   
   def set_package_rws(self,rws):
     self.rws = rws
-    self.package_path = self.rws + '/' + self.package_name
+    self.package_path = self.rws + '/src/' + self.package_name
 
   def create_package_folder(self):
     if not self.rws:
       print('Please set your workspace')
     else:
       if not os.path.exists(self.package_path):
-        print('Package does not exist, creating a new package with name '+self.package_name)
+        print('Package does not exist, creating a new package with name '+self.packag_path+self.package_name)
         os.makedirs(self.package_path)
+    #  'makefile' only needed for ros_build
     self.gen_mkfile()
 
   def get_package_msgs(self):
-    msgdir = self.package_path+'/msg'
-    if os.path.exists(msgdir): 
+    if os.path.exists(self.msg_path): 
       try: 
-        message_list = os.listdir(msgdir)
+        message_list = os.listdir(self.msg_path)
         i = 0
         sub = '.msg'
         for l in message_list:
@@ -54,10 +59,9 @@ class ros_package():
         self.msg_list = []
 
   def get_package_srvs(self):
-    srvdir = self.package_path+'/srv'
-    if os.path.exists(srvdir): 
+    if os.path.exists(self.srv_path): 
       try: 
-        service_list = os.listdir(msgdir)
+        service_list = os.listdir(self.srv_path)
         i = 0
         sub = '.srv'
         for l in srv_list:
@@ -69,7 +73,7 @@ class ros_package():
     else:
       self.srv_list = []
 
-
+#  ros_build only
   def get_dependency_list(self):
     try:
       with open(self.package_path+'/'+'manifest.xml', 'r') as outfile:
@@ -81,11 +85,12 @@ class ros_package():
     except:
        self.dependency_list = []
 
-  def get_node_list(self):
+# ros_build only
+  def get_node_list(self): 
     self.node_list = []
     try:
-      with open(self.package_path+'/'+'CMakeLists.txt', 'r') as outfile:
-        for line in outfile:
+      with open(self.package_path+'/'+'CMakeLists.txt', 'r') as inputfile: # can't read an outfile!
+        for line in inputfile:
           if line.startswith('rosbuild_add_executable('):
             line = line.split(' ')
             node_name = line[0][24:]
@@ -93,6 +98,7 @@ class ros_package():
     except:
       self.node_list = []
 
+# ros_build only
   def gen_mkfile(self):
 	  print('start to generate Makefile')
 	  with open('templates/MakefileTemplate', 'r') as mfile:    
@@ -101,6 +107,7 @@ class ros_package():
 		  for line in m_template:
 			  outfile.write(line)
 
+# ros_build AND catkin
   def gen_cmake(self):
     with open('templates/CMakeListTemplate.txt', 'r') as cfile:
       cm_template = cfile.readlines()
@@ -108,6 +115,7 @@ class ros_package():
       for line in cm_template:
         outfile.write(text.sectsub(text.tagsub(line)))
 
+# ros_build only 
   def update_cmake(self):
     print('start to update CMakeList.txt')
     text.exe_list = ''
@@ -143,6 +151,7 @@ class ros_package():
           text.srv_gen = '#rosbuild_gensrv()'
       self.gen_cmake()
        
+ # ros_build only      
   def update_manifest(self):
     print('start to update manifest.xml')
     text.dependency_list = ''
@@ -156,34 +165,35 @@ class ros_package():
       for line in m_template:
          outfile.write(text.sectsub(text.tagsub(line)))
 
+# ros_build AND catkin
   def gen_msg(self,msg_name):
-    if not os.path.exists(self.package_path+'/'+'msg'): 
-      os.makedirs(self.package_path+'/'+'msg')
-    self.msg_list = os.listdir(self.package_path+'/'+'msg')
+    if not os.path.exists(self.msg_path): 
+      os.makedirs(self.msg_path)
+    self.msg_list = os.listdir(self.msg_path)
     while self.check_msg_name(msg_name):
       msg_name = raw_input('Message file exists already, please use another name: ') or msg_name
     print('start to generate the '+msg_name+'.msg file')
     with open('templates/msgTemplate.msg', 'r') as mfile:    
       m_template = mfile.readlines()
-    with open(self.package_path+'/'+'msg''/'+msg_name+'.msg', 'w') as outfile: 
+    with open(self.msg_path+'/'+msg_name+'.msg', 'w') as outfile: 
       for line in m_template:
 	      outfile.write(text.sectsub(text.tagsub(line)))
 
-
+# ros_build AND catkin
   def gen_srv(self,srv_name):
-    if not os.path.exists(self.package_path+'/'+'srv'): 
-      os.makedirs(self.package_path+'/'+'srv')
-    self.srv_list = os.listdir(self.package_path+'/'+'srv')
+    if not os.path.exists(self.srv_path): 
+      os.makedirs(self.srv_path)
+    self.srv_list = os.listdir(self.srv_path)
     while self.check_srv_name(srv_name):
       srv_name = raw_input('Service file exists already, please use another name: ') or srv_name
     print('start to generate the '+srv_name+'.srv file')
     with open('templates/srvTemplate.srv', 'r') as sfile:
       s_template = sfile.readlines()
-    with open(self.package_path+'/'+'srv''/'+srv_name+'.srv', 'w') as outfile: 
+    with open(self.srv_path+'/'+srv_name+'.srv', 'w') as outfile: 
       for line in s_template:
 	      outfile.write(text.sectsub(text.tagsub(line)))
 
-
+#  rosbuild/catkin ???
   def add_node(self,node):
     if node.lang == 'C++':
       self.add_node_list(node.node_name)
@@ -193,11 +203,13 @@ class ros_package():
       print('Unknown languange')
     node.gen_node_source()
     
+# ros_build only
   def add_dependency(self,dependency):
     self.get_dependency_list()
     if not dependency in self.dependency_list:
       self.dependency_list.append(dependency)
   
+# ros_build AND catkin
   def add_node_list(self,node_name):
     self.get_node_list()
     if not node_name in self.node_list:
@@ -205,6 +217,7 @@ class ros_package():
     else:
       print('Node name exist already, please use another name')
 
+# ros_build AND catkin
   def check_node_name(self,node_name):
     self.get_node_list()
     if not node_name in self.node_list:
@@ -212,6 +225,7 @@ class ros_package():
     else:
       return 1
 
+# ros_build AND catkin
   def check_msg_name(self, msg_name):
      self.get_package_msgs()
      if msg_name+'.msg' in self.msg_list:
@@ -219,6 +233,7 @@ class ros_package():
      else:
        return 0
 
+# ros_build AND catkin
   def check_srv_name(self, srv_name):
      self.get_package_srvs()
      if srv_name+'.srv' in self.srv_list:
@@ -226,6 +241,7 @@ class ros_package():
      else:
        return 0
 
+# ros_build AND catkin
   def edit_custom_msg(self):
     text.msg_var_list = ''
     var_num = 0
@@ -241,6 +257,7 @@ class ros_package():
         text.msv = 'my_message_var'+ str(var_num)
         text.msg_var_list = text.msg_var_list + text.tagsub(text.msv_list)
 
+# ros_build AND catkin
   def edit_custom_srv(self):
     text.srv_var_list = ''
     var_num = 0
@@ -274,6 +291,7 @@ class ros_package():
         
 
 if __name__ == '__main__':
+  # create a test package:  name = "pc" ros workspace = "/Users ... "
    a = ros_package('pc','/Users/Danying/Dropbox/ROSworkspace/ros_node_generator')
    #a.get_node_list()
    #print(a.node_list)
