@@ -48,20 +48,21 @@ if __name__ == '__main__':
 
 ############# Message Object for Publisher ####################
   $MOBs$
-  $MSVs$
 
 ############# Service Object for client ####################
   $SROs$
-  $SVVs$
 ##############################################################
 ##  Main loop start
   while not rospy.is_shutdown():
 ##############################################################
 ##  Message Publications
+    $MSVs$
     $PBLs$
 ##############################################################
 ##  Service Client Calls
+    $SVVs$
     $SCCs$
+    
     rospy.loginfo("$RNN$: main loop")
     rospy.sleep(2)
 ###############################################################
