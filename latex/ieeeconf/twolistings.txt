@@ -1,0 +1,147 @@
+
+\begin{lstlisting}
+#!/usr/bin/env python
+"""nav.py, A minimal ROS node in Python.
+"""
+### This file is generated using ros node template, feel free to edit
+### Please finish the TODO part
+#  Ros imports
+import rospy
+import roslib; roslib.load_manifest('$PKG$')
+
+## message import format:
+##from MY_PACKAGE_NAME.msg import MY_MESSAGE_NAME
+#from   $PKG$.msg import  $MSG$
+
+$IMPs$
+
+##############################################################
+##   Message Callbacks
+$MCBs$
+
+##############################################################
+##  Service Callbacks
+$SCBs$
+
+##############################################################
+# Main Program Code
+# This is run once when the node is brought up (roslaunch or rosrun)
+if __name__ == '__main__':
+  print "Hello world"
+# get the node started first so that logging works from the get-go
+  rospy.init_node("$RNN$")
+  rospy.loginfo("Started template python node: $RNN$.")
+##############################################################
+##  Service Advertisers
+  $SADs$
+
+##############################################################
+##  Message Subscribers
+  $SUBs$
+
+##############################################################
+##  Message Publishers
+  $PUBs$
+
+##############################################################
+##  Service Client Inits
+  $SCIs$
+
+############# Message Object for Publisher ####################
+  $MOBs$
+  $MSVs$
+
+############# Service Object for client ####################
+  $SROs$
+
+##############################################################
+##  Main loop start
+  while not rospy.is_shutdown():
+##############################################################
+##  Message Publications
+    $PBLs$
+##############################################################
+##  Service Client Calls
+    $SVVs$
+    $SCCs$
+    rospy.loginfo("$RNN$: main loop")
+    rospy.sleep(2)
+###############################################################
+#
+# end of main wile loop
+\end{lstlisting}
+
+
+\begin{lstlisting}
+#!/usr/bin/env python
+"""nav.py, A minimal ROS node in Python.
+"""
+### This file is generated using ros node template, feel free to edit
+### Please finish the TODO part
+#  Ros imports
+import rospy
+import roslib; roslib.load_manifest('test2')
+
+## message import format:
+##from MY_PACKAGE_NAME.msg import MY_MESSAGE_NAME
+#from   test2.msg import  String
+from test2.msg import String
+from test2.srv import bh_service
+
+##############################################################
+##   Message Callbacks
+
+##############################################################
+##  Service Callbacks
+
+##############################################################
+# Main Program Code
+# This is run once when the node is brought up (roslaunch or rosrun)
+if __name__ == '__main__':
+  print "Hello world"
+# get the node started first so that logging works from the get-go
+  rospy.init_node("icra_2015_node")
+  rospy.loginfo("Started template python node: icra_2015_node.")
+##############################################################
+##  Service Advertisers
+ 
+##############################################################
+##  Message Subscribers
+
+##############################################################
+##  Message Publishers
+  String_pub1  = rospy.Publisher("icra_2015_tpc",String)
+  
+##############################################################
+##  Service Client Inits
+  rospy.wait_for_service("example_serv_2015")
+  bh_service_cli1 = rospy.ServiceProxy("example_serv_2015", bh_service)
+
+############# Message Object for Publisher ####################
+  String_obj1 = String()
+
+############# Service Object for client ####################
+  bh_service_obj1 = bh_service()
+  
+  
+##############################################################
+##  Main loop start
+  while not rospy.is_shutdown():
+##############################################################
+##  Message Publications
+    String_pub1.publish(String_obj1)
+    
+##############################################################
+##  Service Client Calls
+    bh_service_obj1.rng.py = 0
+    bh_service_obj1.rng.py = 0
+    try:
+      result = bh_service_cli1(bh_service_obj1.rng.py)
+      print(result)
+    except:print("Something wrong with client call example_serv_2015")
+    rospy.loginfo("icra_2015_node: main loop")
+    rospy.sleep(2)
+###############################################################
+#
+# end of main wile loop
+\end{lstlisting}
