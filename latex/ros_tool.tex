@@ -204,7 +204,7 @@ start to update CMakeList.txt
 \caption{Terminal dialog in which ros\_tool creates a node in Python language which can publish to the topic ``icra\_2015\_tpc" and invoke the service ``bh\_service.srv" as a client.}\label{dialogexample}
 \end{figure*}
 
-Because this is a Python node, ros\_tool selects  the pyt2\_template.py template file.  The before and after versions of that file are reproduced in Figure \ref{sidebysidecode}.
+Because this is a Python node, ros\_tool selects  the pyt2\_template.py template file.  The before and after versions of that file are reproduced in Figure \ref{sidebysidecode}.  Because the template files (Table \ref{tagtable}) are editable, an organization such as a research lab can customize the templates for their own local envronment or dependencies.   With custom templates, new users will easily generate useful node skeletons for the local environment.
 
 \begin{figure*}
 \includegraphics[width=6.25in]{sideBySide1.png}
@@ -251,7 +251,8 @@ There are 8 possible test cases for each build system for a total of 16 cases.  
 
 
 \section{Discussion and Future Work}
-The contribution of this work is a new software package to streamline the process of creating a new ROS node for robotics control.
+The contribution of this work is a new software package to streamline the
+process of creating a new ROS node for robotics control.
 The package automatically generates
 code for a new node source file in either C++ or Python.  It also creates
 build-configuration files for either rosbuild or catkin build systems and
