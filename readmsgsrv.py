@@ -16,7 +16,7 @@ class ros_files():
     self.req_list = []
     self.res_list = []
     self.package_found = False
-  
+
   def get_package_path(self):
     try:
       print 'getting path for package: ['+self.package_name+']'
@@ -38,8 +38,8 @@ class ros_files():
 
   def find_msgs(self):
     if self.package_found:
-      if os.path.exists(self.msg_path): 
-        try: 
+      if os.path.exists(self.msg_path):
+        try:
           message_list = os.listdir(self.msg_path)
           for l in message_list:
             if '.msg' in l:
@@ -54,19 +54,19 @@ class ros_files():
     else:
       print('ros package '+self.package_name+' does not exist !')
       return 0
-  
+
   def list_msgs(self):
     if self.find_msgs():
       i = 0
-      print('Find the following messages in the package '+self.msg_path+':')
+      print('Found the following messages in the package '+self.msg_path+':')
       for l in self.message_list:
         i +=1
         print(str(i)+': '+l)
 
   def find_srvs(self):
     if self.package_found:
-      if os.path.exists(self.srv_path): 
-        try: 
+      if os.path.exists(self.srv_path):
+        try:
           service_list = os.listdir(self.srv_path)
           for l in service_list:
             if '.srv' in l:
@@ -85,15 +85,15 @@ class ros_files():
   def list_srvs(self):
     if self.find_srvs():
       i = 0
-      print('Find the following services in the package '+self.srv_path+':')
+      print('Found the following services in the package '+self.srv_path+':')
       for l in self.service_list:
         i += 1
         print(str(i)+': '+l)
 
   def load_msg(self,msg):
-    if self.find_msgs(): 
+    if self.find_msgs():
        if msg+'.msg' in self.message_list:
-         with open(self.package_path+'/msg/'+ msg+'.msg', 'r') as msgfile:    
+         with open(self.package_path+'/msg/'+ msg+'.msg', 'r') as msgfile:
            tmp = msgfile.readlines()
          for l in tmp:
            if l.startswith('#'): print('this is a comment line')
@@ -109,15 +109,15 @@ class ros_files():
       print('Unable to load the message with name '+msg)
 
   def load_srv(self,srv):
-    if self.find_srvs(): 
+    if self.find_srvs():
        if srv+'.srv' in self.service_list:
-         with open(self.package_path+'/srv/'+ srv+'.srv', 'r') as srvfile:    
+         with open(self.package_path+'/srv/'+ srv+'.srv', 'r') as srvfile:
            tmp = srvfile.readlines()
          res_flag = 0
          for l in tmp:
            if l.startswith('#'):  #print('this is a comment line')
              x = 0 # dummy line
-           elif l.startswith('---'): 
+           elif l.startswith('---'):
              res_flag = 1
            elif l.startswith('\n'):   #print('this is an empty line')
              x = 0 # dummy line

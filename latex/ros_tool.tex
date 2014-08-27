@@ -2,7 +2,7 @@
 
 %\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
 
-\IEEEoverridecommandlockouts                              % This command is only needed if 
+\IEEEoverridecommandlockouts                              % This command is only needed if
                                                           % you want to use the \thanks command
 
 \overrideIEEEmargins                                      % Needed to meet printer requirements.
@@ -55,7 +55,7 @@ TBD:   Let?s come up with a cool and short name for the tool?. ideas?\\
    ros-o-matic??\\
 
 we can do a global search-replace with  [ros\_tool] $\to$ new-name
- 
+
  \vspace{2.0in}
 
 \end{abstract}
@@ -64,36 +64,36 @@ we can do a global search-replace with  [ros\_tool] $\to$ new-name
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
 \subsection{ROS}
-ROS\cite{xxxxx} is a widely adopted middleware package for robotics which greatly facilitates cooperation among software modules in a robotic system.   Unfortunately, ROS suffers from a difficult learning curve, especially for programmers who are not well versed in build systems such as CMake.   
-ROS has available an excellent set of tutorials\cite{RosTutorialsWWW} which quickly expose the new user to the basic functions.  However, the examples in the tutorials can be hard for new users to generalize into new applications.  Modifying the tutorial examples into desired applications which function independently of the tutorial packages is not straightforward. 
+ROS\cite{xxxxx} is a widely adopted middleware package for robotics which greatly facilitates cooperation among software modules in a robotic system.   Unfortunately, ROS suffers from a difficult learning curve, especially for programmers who are not well versed in build systems such as CMake.
+ROS has available an excellent set of tutorials\cite{RosTutorialsWWW} which quickly expose the new user to the basic functions.  However, the examples in the tutorials can be hard for new users to generalize into new applications.  Modifying the tutorial examples into desired applications which function independently of the tutorial packages is not straightforward.
 
 One simple approach to making the learning curve easier is to create template, ``starter", files, which can be customized by the new user.  However, ROS has a large number of capabilities and supports multiple languages.  Thus there are many needed templates.   Specific attributes of ROS nodes which generate different elements in the node code are
 \begin{itemize}
   \item Language options: C++ and Python (other languages will not be considered here but ROS support for Java and Lisp exists)
-  \item Communication tasks: which can be one or more of Messages, Services, and Actions 
-  \item Direction of communication: inbound and outbound communication is referred to by names specific to the task. For example 
-  Subscribe and Publish  describe input and output  for messages. 
+  \item Communication tasks: which can be one or more of Messages, Services, and Actions
+  \item Direction of communication: inbound and outbound communication is referred to by names specific to the task. For example
+  Subscribe and Publish  describe input and output  for messages.
 \end{itemize}
 
 The total number of templates is thus 12 (assuming only one ROS feature is used in the application).  A template-based approach would also require the  user to create build configuration files including ROS and node specific manifest.xml, CMakeLists.txt, and package.xml depending on which of the two ROS build systems (rosbuild  or catkin) will be used.  Counting the two build-system options, the total number of permuations becomes 24!
-Many ROS applications (even at the beginner level) require more than one of the above combinations.  For example, a node may publish a message and call a service.  Thus a set of fixed templates is of limited practical use. 
- 
+Many ROS applications (even at the beginner level) require more than one of the above combinations.  For example, a node may publish a message and call a service.  Thus a set of fixed templates is of limited practical use.
+
 For each node which instantiates one or more particular task/language combinations, a ROS application must have
 \begin{itemize}
   \item Includes/imports for dependencies
   \item Initialization of the node
   \item Instantiation of classes for task units (message variables, service requests and responses, etc.)
   \item Callbacks (for inbound communications)
-  \item Example invocations of some classes (such as {\tt roscpp::publish() or rospy.publish()}) 
+  \item Example invocations of some classes (such as {\tt roscpp::publish() or rospy.publish()})
   \item Proper argument lists for the class invocations and methods
-  \item Correctly configured CMakeLists.txt and package.xml or manifest.xml files. 
+  \item Correctly configured CMakeLists.txt and package.xml or manifest.xml files.
 \end{itemize}
 
 
 \section{Approach}
 \subsection{Software Description}
 
-ros\_tool assumes that the user has a properly configured ROS workspace already created, that roscore is running, and that a package has been created and initialized in the current workspace.   ros\_tool is written in Python and contains classes which describe and process the ROS package, and a new ROS node, as well as helper functions to explore the package file tree and determine any existing .msg and .srv files.  
+ros\_tool assumes that the user has a properly configured ROS workspace already created, that roscore is running, and that a package has been created and initialized in the current workspace.   ros\_tool is written in Python and contains classes which describe and process the ROS package, and a new ROS node, as well as helper functions to explore the package file tree and determine any existing .msg and .srv files.
 
 The first part of ros\_tool execution collects information from the user about the desired application template including
 \begin{itemize}
@@ -111,19 +111,19 @@ There are three ways this information is collected.   First, the user can edit a
 rws = '/home/blake/Projects/Ros2/RosNodeGen/'
 \end{verbatim}
 
-initialize the variable ``rws" which contains the ROS workspace path. 
+initialize the variable ``rws" which contains the ROS workspace path.
 
 A second mode of data collection is to query the user.   This is done with ``rawinput()" statements in the command line.  For example one such input statement prompts the user to enter the name of the node as:
 
 \begin{verbatim}
-Enter your new node name: [test_node]: 
+Enter your new node name: [test_node]:
 \end{verbatim}
 
 The default value, in this case ``test\_node", is accepted if the user hits enter without typing a new value.
 
-Finally, the ros\_tool gets some information by exploring the file system of the selected package.  We use the {\tt rospkg} library (http://www.ros.org/reps/rep-0114.html) to look for msg and service descriptors (.msg and .srv files) which may exist in the package.   Information collected by the three methods is populated into the package and node objects.  
+Finally, the ros\_tool gets some information by exploring the file system of the selected package.  We use the {\tt rospkg} library (http://www.ros.org/reps/rep-0114.html) to look for msg and service descriptors (.msg and .srv files) which may exist in the package.   Information collected by the three methods is populated into the package and node objects.
 
-One of the most important user inputs is to specify the language (C++ and Python only in the current version).   Language selection determines the initial template file as well as the templates for the included statements.  As each message or service is fully specified, appropriate statements in the selected language are generated by substituting their data tags and then appended to the section tag statement lists.    After the end of user input, the output files are generated by completing substitution of any remaining data tags and writing the output files. 
+One of the most important user inputs is to specify the language (C++ and Python only in the current version).   Language selection determines the initial template file as well as the templates for the included statements.  As each message or service is fully specified, appropriate statements in the selected language are generated by substituting their data tags and then appended to the section tag statement lists.    After the end of user input, the output files are generated by completing substitution of any remaining data tags and writing the output files.
 
 \subsection{Generating Output}
 
@@ -143,11 +143,11 @@ srvTemplate.srv                & .srv files\\
 \caption{Template files used by ros\_tool to generate user node and associated build files.}\label{tagtable}
 \end{table}
 
-An example tag is "{\tt \$PKG\$}" which will be replaced by the package name. 
+An example tag is "{\tt \$PKG\$}" which will be replaced by the package name.
 
-The ros\_tool contains a large number of tag/value pairs which are populated from the node and package classes and used to create the required output files from the templates.   Tags are further divided into two levels, data tags and section tags.   Data tags contain simple values such as the name of a ROS message.  Section tags contain entire sections of generated code such as statements to instantiate several ROS messages to which the application will subscribe  or all the user-specific imports required in a Python node.  Section tags may contain data tags.    
+The ros\_tool contains a large number of tag/value pairs which are populated from the node and package classes and used to create the required output files from the templates.   Tags are further divided into two levels, data tags and section tags.   Data tags contain simple values such as the name of a ROS message.  Section tags contain entire sections of generated code such as statements to instantiate several ROS messages to which the application will subscribe  or all the user-specific imports required in a Python node.  Section tags may contain data tags.
 
-When generating a new node with ros\_tool, the output generates files which are in the right locations and are ready for building with the selected ROS build tool.   All configurations including CMakeList.txt and manifest.xml/package.xml have been automatically updated. Template files for build files are selected based on which of the two build systems are selected.  
+When generating a new node with ros\_tool, the output generates files which are in the right locations and are ready for building with the selected ROS build tool.   All configurations including CMakeList.txt and manifest.xml/package.xml have been automatically updated. Template files for build files are selected based on which of the two build systems are selected.
 
 Another issue which generates multiple branches in the logic is the potential use of existing message/service/action templates vs. creating custom ones.  As a user prepares an application template, there are several possibilities (although they will be illustrated here with messages they apply to services and actions as well):
 \begin{enumerate}
@@ -155,7 +155,7 @@ Another issue which generates multiple branches in the logic is the potential us
   \item User wishes to use a custom message in the current package, .msg file already exists
   \item User wishes to use a custom message in the current package, but has not yet created the .msg file.
 \end{enumerate}
-ros\_tool supports all three of these cases, prompting the user for necessary information to build a new .msg file if necesssary. 
+ros\_tool supports all three of these cases, prompting the user for necessary information to build a new .msg file if necesssary.
 
 \section{Example}
 In the following example, we create a new Python node in the ``test2" package called ``icra\_2015\_node".  This new node will publish a message (with an existing .msg file in the test2 package) and will call a service (``example\_serv\_2015") as a client.   The user dialog is reproduced in Figure \ref{dialogexample}:
@@ -183,7 +183,7 @@ Found package path: /home/blake/Projects/Ros2/RosNodeGen/src/test2
 this is a comment line
 this is a header line
 this is an empty line
-Do you want to add a message? (y for yes, n/CR for no) 
+Do you want to add a message? (y for yes, n/CR for no)
 Do you want to add a service? (y for yes, n/CR for no) y
 [C]lient or [S]erver?: Cli
 Enter the package that contains your service, default package: [ test2 ]
@@ -195,7 +195,7 @@ Select service by number: 1
 Enter the name of your service: default [bh_service_name]example_serv_2015
 getting path for package: [test2]
 Found package path: /home/blake/Projects/Ros2/RosNodeGen/src/test2
-Do you want to add a service? (y for yes, n/CR for no) 
+Do you want to add a service? (y for yes, n/CR for no)
 start to generate the source file for node icra_2015_node in language Python
 start to update manifest.xml
 start to update CMakeList.txt
@@ -214,11 +214,47 @@ Because this is a Python node, ros\_tool selects  the pyt2\_template.py template
 \label{sidebysidecode}
 \end{figure*}
 
+
+\section{Testing}
+We are currently engaged in a systematic testing plan to validate the generated code modules.  We have generated XX test cases based on the combinations as follows:
+
+\begin{tabular}{lcl}
+Feature & N & Options \\ \hline
+Language & 2 & C++ and Python \\
+Build System & 2 &  rosbuild and Catkin \\
+Message Transmission & 2 & Publish and Subscribe \\
+Service Calling & 2 & Client and Server\\
+\end{tabular}
+
+Testing runs consist of generation of two nodes which will communicate with each other.  Each node pair will be generated, built, and run and functional communication will be verified between them.
+
+The test case table is
+\vspace{0.15in}
+
+\begin{tabular}{|l|l|l|l|}\hline
+Node$_1$      & Node$_2$      & Task$_1$ & Task$_2$ \\\hline
+C++           & C++           & Msg. Pub & Msg. Sub \\\hline
+C++           & Python        & Msg. Pub & Msg. Sub \\\hline
+C++           & C++           & Service Cli & Service Serv \\\hline
+C++           & Python        & Service Cli & Service Serv \\\hline
+Python        & C++           & Msg. Pub & Msg. Sub \\\hline
+Python        & Python        & Msg. Pub & Msg. Sub \\\hline
+Python        & C++           & Service Cli & Service Serv \\\hline
+Python        & Python        & Service Cli & Service Serv \\\hline
+\end{tabular}
+
+\vspace{0.15in}
+
+There are 8 possible test cases for each build system for a total of 16 cases.  As of this writing XXX of the 16 cases have been tested and debugged.  When ROS actions are supported, 8 more test cases will be added.
+
+
+
+
 \section{Discussion and Future Work}
-The contribution of this work is a new software package to streamline the process of creating a new ROS node for robotics control. 
-The package automatically generates 
+The contribution of this work is a new software package to streamline the process of creating a new ROS node for robotics control.
+The package automatically generates
 code for a new node source file in either C++ or Python.  It also creates
-build-configuration files for either rosbuild or catkin build systems and 
+build-configuration files for either rosbuild or catkin build systems and
 .msg or .srv files if necessary
 
 ros\_tool source code and template files are available on github: *****URL******
@@ -226,8 +262,8 @@ ros\_tool source code and template files are available on github: *****URL******
 As with all software, the ros\_tool has limitations:
 Much of the user input is based on a clunky command line interface.  GUI support (through a package like tkinter/ttk) should be implemented.
 Python indentation needs adjustment by the user and should be automatically corrected as tags are filled in with values.
-Configuration files such as CMakeLists.txt are created from the generic template files and so if a package contains existing nodes, the old CMakeLists.txt file must be saved and manually merged with the new one. 
-Variable names for new custom messages and services are auto-generated and thus not descriptive for the applications semantics.  
+Configuration files such as CMakeLists.txt are created from the generic template files and so if a package contains existing nodes, the old CMakeLists.txt file must be saved and manually merged with the new one.
+Variable names for new custom messages and services are auto-generated and thus not descriptive for the applications semantics.
 
 \subsection{Future Work }
 Our current priorities for future improvements to ros\_tool are
@@ -237,5 +273,5 @@ Our current priorities for future improvements to ros\_tool are
  \item Adapt the build-file output system to modify existing CMakeList.txt instead of creating from scratch.
 \end{itemize}
 
-The ros\_tool code is open source (LGPL) and we encourage users to identify and fix bugs and limitations to ros\_tool and participate in a community effort to simplify ROS development. 
+The ros\_tool code is open source (LGPL) and we encourage users to identify and fix bugs and limitations to ros\_tool and participate in a community effort to simplify ROS development.
 \end{document}

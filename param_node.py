@@ -9,7 +9,8 @@ ros_build_system = 'rosbuild'
 
 # path to your ROS workspace
 #rws = '/home/danying/ROSWorkspace/ros_node_generator/'
-rws = '/home/blake/Projects/Ros2/RosNodeGen/'
+#rws = '/home/blake/Projects/Ros2/RosNodeGen/'
+rws = '/home/blake/Projects/Ros_node2/RosNodeGen/'
 # name of ROS package
 pkg = 'my_test_package'
 # package text description
