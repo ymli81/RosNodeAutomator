@@ -1,15 +1,16 @@
 # ros node generator parameter file
 
 #  Start by reading and editing this file.   When done, save this and run:
-#  > ./rng.py
+#  > rng.py
 
-# Which ROS build system are you going to use?
-#ros_build_system='rosbuild'
-ros_build_system='catkin'
+# select your build system
+#ros_build_system = 'catkin'
+ros_build_system = 'ros_build'
 
 # path to your ROS workspace
 rws = '/home/danying/ROSWorkspace/ros_node_generator/'
-rws = '/home/blake/Projects/Ros2/RosNodeGen/'
+#rws = '/home/blake/Projects/Ros2/RosNodeGen/'
+#rws = '/home/blake/Projects/Ros_node2/RosNodeGen/'
 # name of ROS package
 pkg = 'my_test_package'
 # package text description
@@ -29,14 +30,12 @@ direction = 'incoming'
 
 # First, enter name of custom message files you have in ~/package/msg/
 # name of .msg file (describing your message)
-msg = 'custom_msg'
-
+msg = ''
+msg_flag = 0
+srv_flag = 0
 # name of one of the variables defined in the message (ideally a string)
 # if you have more than one variable (such as from multiple .msg files),
 # you will need to add those manually
-# msv = 'my_message_var'
-
-
 
 ### Services
 # name of  .srv file for your service (found in ~/package/srv/)
