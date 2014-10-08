@@ -54,9 +54,11 @@ except Exception as exc:
   print 'Ros exception: '+name_of_exception
   print '\n\nPlease check your ROS environment'
   print ' 1) did you already:'
-  print '      1.1) create and initialize your package (catkin_create_pkg or roscreate-pkg)'
-  print '      1.2) build your package  (catkin_make)'
-  print ' 2) cd (ros workspace) source devel/setup.bash'
+  print '      1.1) create and initialize your package:'
+  print '            a) mkdir -p src/packagename'
+  print '            b) (catkin_create_pkg or roscreate-pkg)'
+  print '      1.2) cd '+rws+' and build your package  (catkin_make)'
+  print ' 2) cd '+rws+'; source devel/setup.bash'
   print ''
   print 'Test your ros setup:'
   tmpstr = pkg[:3]
