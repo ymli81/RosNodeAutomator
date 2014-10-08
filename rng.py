@@ -18,7 +18,7 @@ for line in initcode:
 ##  Package name ##
 pkg = raw_input('Enter your package name: ') or pkg
 my_rospkg = ros_package(pkg,rws)
-my_rospkg.set_build_system = ros_build_system
+my_rospkg.set_build_system(ros_build_system)
 my_rospkg.create_package_folder()
 
 
