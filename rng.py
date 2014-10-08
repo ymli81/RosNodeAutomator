@@ -34,7 +34,7 @@ for line in initcode:
 
 ####################### Query user for details ###########################
 ##  Package name ##
-pkg = raw_input('Enter your package name: ') or pkg
+pkg = raw_input('Enter your package name ['+pkg+']: (it should exist already)') or pkg
 my_rospkg = ros_package(pkg,rws)
 my_rospkg.set_build_system(ros_build_system)
 my_rospkg.create_package_folder()
@@ -50,10 +50,13 @@ try:
 except Exception as exc:
   name_of_exception = type(exc).__name__
   print 'Could not "rospack.get_path" of package: '+pkg
+  print '  in ROS workspace: '+rws
   print 'Ros exception: '+name_of_exception
   print '\n\nPlease check your ROS environment'
-  print ' 1) did you already create and initialize your package (catkin_create_pkg or roscreate-pkg)'
-  print ' 2) source devel/setup.bash'
+  print ' 1) did you already:'
+  print '      1.1) create and initialize your package (catkin_create_pkg or roscreate-pkg)'
+  print '      1.2) build your package  (catkin_make)'
+  print ' 2) cd (ros workspace) source devel/setup.bash'
   print ''
   print 'Test your ros setup:'
   tmpstr = pkg[:3]

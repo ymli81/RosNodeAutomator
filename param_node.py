@@ -21,15 +21,16 @@
 #  > rng.py
 
 # select your build system
-#ros_build_system = 'catkin'
-ros_build_system = 'ros_build'
+ros_build_system = 'catkin'
+#ros_build_system = 'ros_build'
 
 # path to your ROS workspace
 #examples:
 rws = os.getcwd()   # use the current working directory
 #rws = '/home/user/Projects/ros_workspace/'     # an existing ROS workspace
+
 # name of ROS package
-pkg = 'my_test_package'
+pkg = 'test_package'
 # package text description
 pkd = 'A first package for testing the ros node generator'
 
@@ -45,7 +46,7 @@ direction = 'incoming'
 
 ###   MESSAGES
 
-# First, enter name of custom message files you have in ~/package/msg/
+# First, enter name of custom message files you have in ~package/msg/
 # name of .msg file (describing your message)
 msg = ''
 msg_flag = 0
@@ -55,11 +56,8 @@ srv_flag = 0
 # you will need to add those manually
 
 ### Services
-# name of  .srv file for your service (found in ~/package/srv/)
+# name of  .srv file for your service (found in ~package/srv/)
 srv = 'custom_srv'
-
-# location of template files
-#file_base = '/home/blake/Dropbox/Ros_node2/'
-#file_base = "C:Userslake\Dropbox\Ros_node2"
+ 
 
 
