@@ -162,6 +162,7 @@ class ros_package():
       with open('templates/CMakeListTemplate_rosbuild.txt', 'r') as cfile:
         cm_template = cfile.readlines()
     else:
+      text.pkg = self.package_name
       with open('templates/CMakeListTemplate_catkin.txt', 'r') as cfile:
         cm_template = cfile.readlines()
     with open(self.package_path+'/'+'CMakeLists.txt', 'w') as outfile:
@@ -279,6 +280,7 @@ class ros_package():
 
 # catkin only
   def gen_package_catkin(self):
+    text.pkg = self.package_name
     with open('templates/packageTemplate.xml', 'r') as mfile:
       m_template = mfile.readlines()
     with open(self.package_path+'/'+'package.xml', 'w') as outfile:
