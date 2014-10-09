@@ -5,7 +5,7 @@
   <author>Danying Hu</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/test</url>
+  <url>http://ros.org/wiki/$PKG$</url>
   <depend package="roscpp"/>
   <depend package="rospy"/>
   $DEPs$

@@ -17,6 +17,7 @@ This file is part of RNA - The Ros Node Automator.
     along with RNA - The Ros Node Automator.  If not, see <http://www.gnu.org/licenses/>.
 --------------------------------
 """
+
 import os, sys
 #import rospkg
 import text
@@ -24,7 +25,7 @@ from rosnode import ros_node
 
 class ros_package():
   def __init__(self,name = '',rws = '',bs = ''):
-    self.build_system = 'ros_build'
+    self.build_system = bs
     self.package_name = name
     self.rws = rws
     self.package_path = rws+'/'+name  # is this rosbuild style?
@@ -58,7 +59,7 @@ class ros_package():
     else:
       print('Unknown build environment. Please specify your build system in param_node.py')
 
-# TODO::ros_build and catkin
+# ros_build and catkin
   def create_package_folder(self):
     if not self.rws:
       print('Please set your workspace')
@@ -67,10 +68,14 @@ class ros_package():
       if not os.path.exists(self.package_path):
         print('Package does not exist, creating a new package directory '+self.package_path)
         os.makedirs(self.package_path)
-        self.gen_mkfile()  #  'makefile' only needed for ros_build
         self.gen_cmake()
-        self.gen_manifest()
+        if self.build_system == 'ros_build':
+          self.gen_mkfile()  #  'makefile' only needed for ros_build
+          self.gen_manifest()
+        else:
+          self.gen_package_catkin()
 
+# ros_build AND catkin
   def get_package_msgs(self):
     if os.path.exists(self.msg_path):
       try:
@@ -86,6 +91,7 @@ class ros_package():
     else:
         self.msg_list = []
 
+# ros_build AND catkin
   def get_package_srvs(self):
     if os.path.exists(self.srv_path):
       try:
@@ -101,20 +107,29 @@ class ros_package():
     else:
       self.srv_list = []
 
-#  ros_build only
+# ros_build AND catkin
   def get_dependency_list(self):
     try:
-      with open(self.package_path+'/'+'manifest.xml', 'r') as outfile:
-        for line in outfile:
-          if line.startswith('  <depend package="'):
-            line = line.split('"')
-            if line[1]!='roscpp' and line[1]!='rospy' and not line[1] in self.dependency_list:
-              self.dependency_list.append(line[1])
+      if self.build_system == 'ros_build':
+        with open(self.package_path+'/'+'manifest.xml', 'r') as outfile:
+          for line in outfile:
+            if line.startswith('  <depend package="'):
+              line = line.split('"')
+              if line[1]!='roscpp' and line[1]!='rospy' and not line[1] in self.dependency_list:
+                self.dependency_list.append(line[1])
+      else:
+        with open(self.package_path+'/'+'package.xml', 'r') as outfile:
+          for line in outfile:
+            if line.startswith('  <build_depend>'):
+              line = line.split('</')
+              dependency = line[0][16:]
+              if dependency!='roscpp' and dependency!='rospy' and dependency!='message_generation' and not dependency in self.dependency_list:
+                self.dependency_list.append(dependency)
     except:
        self.dependency_list = []
 
-# ros_build only
-  def get_node_list_rosbuild(self):
+# ros_build AND catkin
+  def get_node_list(self):
     self.node_list = []
     try:
       with open(self.package_path+'/'+'CMakeLists.txt', 'r') as inputfile: # can't read an outfile!
@@ -123,7 +138,12 @@ class ros_package():
             line = line.split(' ')
             node_name = line[0][24:]
             self.node_list.append(node_name)
+          elif line.startswith('add_executable('):
+            line = line.split(' ')
+            node_name = line[0][15:]
+            self.node_list.append(node_name)
     except:
+      print('excepted')
       self.node_list = []
 
 # ros_build only
@@ -138,48 +158,101 @@ class ros_package():
 
 # ros_build AND catkin
   def gen_cmake(self):
-    with open('templates/CMakeListTemplate.txt', 'r') as cfile:
-      cm_template = cfile.readlines()
+    if self.build_system == 'ros_build':
+      with open('templates/CMakeListTemplate_rosbuild.txt', 'r') as cfile:
+        cm_template = cfile.readlines()
+    else:
+      with open('templates/CMakeListTemplate_catkin.txt', 'r') as cfile:
+        cm_template = cfile.readlines()
     with open(self.package_path+'/'+'CMakeLists.txt', 'w') as outfile:
       for line in cm_template:
         outfile.write(text.sectsub(text.tagsub(line)))
     print('Created package file '+self.package_path+'/CMakeList.txt')
 
-# ros_build only
+# ros_build AND catkin
   def update_cmake(self):
     print('start to update CMakeList.txt')
+    if self.build_system == 'ros_build':
+      self.update_cmake_rosbuild()
+    elif self.build_system == 'catkin':
+      self.update_cmake_catkin()
+    else:
+      print('Unknown build environment. Please specify your build system in param_node.py')
+
+# ros_build only
+  def update_cmake_rosbuild(self):
     text.exe_list = ''
     for i in self.node_list:
       text.node_name = i
-      text.exe_list = text.exe_list + text.tagsub(text.executable)
-    if not os.path.isfile(self.package_path+'/'+'CMakeLists.txt'):
-      if (self.msg_flag == 1):
+      text.exe_list = text.exe_list + text.tagsub(text.executable_rosbuild)
+    with open(self.package_path+'/'+'CMakeLists.txt', 'r') as cmfile:
+      cmfile = cmfile.readlines()
+    if (self.msg_flag == 1):
+      text.msg_gen = 'rosbuild_genmsg()'
+    else:
+      if 'rosbuild_genmsg()\n' in cmfile:
         text.msg_gen = 'rosbuild_genmsg()'
       else:
         text.msg_gen = '#rosbuild_genmsg()'
-      if (self.srv_flag == 1):
+    if (self.srv_flag == 1):
+      text.srv_gen = 'rosbuild_gensrv()'
+    else:
+      if 'rosbuild_gensrv()\n' in cmfile:
         text.srv_gen = 'rosbuild_gensrv()'
       else:
         text.srv_gen = '#rosbuild_gensrv()'
-      self.gen_cmake()
+    self.gen_cmake()
+
+# catkin only
+  def update_cmake_catkin(self):
+    text.exe_list = ''
+    for i in self.node_list:
+      text.node_name = i
+      text.exe_list = text.exe_list + text.tagsub(text.executable_catkin)
+    text.msg_list, text.srv_list = self.process_cmake_catkin()
+    if (self.msg_flag == 1) or (self.srv_flag == 1):
+      text.msg_gen = 'generate_messages(DEPENDENCIES std_msgs)'
+      if self.msg_flag == 1: 
+        text.msg_add = text.tagsub(text.msg_add_file)
+      if self.srv_flag == 1:
+        text.srv_add = text.tagsub(text.srv_add_file)
     else:
-      with open(self.package_path+'/'+'CMakeLists.txt', 'r') as cmfile:
-        cmfile = cmfile.readlines()
-      if (self.msg_flag == 1):
-        text.msg_gen = 'rosbuild_genmsg()'
-      else:
-        if 'rosbuild_genmsg()\n' in cmfile:
-          text.msg_gen = 'rosbuild_genmsg()'
-        else:
-          text.msg_gen = '#rosbuild_genmsg()'
-      if (self.srv_flag == 1):
-        text.srv_gen = 'rosbuild_gensrv()'
-      else:
-        if 'rosbuild_gensrv()\n' in cmfile:
-          text.srv_gen = 'rosbuild_gensrv()'
-        else:
-          text.srv_gen = '#rosbuild_gensrv()'
-      self.gen_cmake()
+      text.msg_gen = ''
+      text.msg_add = ''
+      text.srv_add = ''
+    for i in self.dependency_list:
+      text.catkin_dependency_list = text.catkin_dependency_list + i +' '
+    self.gen_cmake()
+
+# catkin only
+  def process_cmake_catkin(self):
+    msg_file_list = ''
+    srv_file_list = ''
+    dep_pkg_list = ''
+    with open(self.package_path+'/'+'CMakeLists.txt', 'r') as cmfile:
+      cmfile = cmfile.readlines()
+    for line in cmfile:
+      if line.startswith('add_message_files'):
+        self.msg_flag = 1
+        line = line.split(' ')
+        for tmp in line:
+          if ".msg" in tmp:
+            fileName = tmp[:tmp.find(".msg") + len(".msg")]
+            msg_file_list = msg_file_list + fileName+ ' '
+      elif line.startswith('add_service_files'):
+        self.srv_flag = 1
+        line = line.split(' ')
+        for tmp in line:
+          if ".srv" in tmp:
+            fileName = tmp[:tmp.find(".srv") + len(".srv")]
+            srv_file_list = srv_file_list + fileName+ ' '
+      elif line.startswith('find_package('):
+        line = line.split(' ')
+        for tmp in line:
+          if tmp and not tmp=='find_package(catkin' and not tmp=='REQUIRED' and not tmp=='COMPONENTS' and not tmp=='roscpp' and not tmp=='rospy' and not tmp == 'message_generation':
+            fileName = tmp[:tmp.find(")")]
+            dep_pkg_list = dep_pkg_list + fileName + ' '
+    return msg_file_list,srv_file_list
 
  # ros_build only
   def gen_manifest(self):
@@ -203,6 +276,37 @@ class ros_package():
     with open(self.package_path+'/'+'manifest.xml', 'w') as outfile:
       for line in m_template:
          outfile.write(text.sectsub(text.tagsub(line)))
+
+# catkin only
+  def gen_package_catkin(self):
+    with open('templates/packageTemplate.xml', 'r') as mfile:
+      m_template = mfile.readlines()
+    with open(self.package_path+'/'+'package.xml', 'w') as outfile:
+      for line in m_template:
+         outfile.write(text.sectsub(text.tagsub(line)))
+    print('Created package file '+self.package_path+'/package.xml')
+
+# catkin only
+  def update_package_catkin(self):
+    print('start to update package.xml')
+    text.dependency_list = ''
+    for i in self.dependency_list:
+      if not i == self.package_name:
+        text.pkgd = i
+        text.dependency_list = text.dependency_list + text.tagsub(text.depend_pkg_catkin)
+    with open('templates/packageTemplate.xml', 'r') as mfile:
+      m_template = mfile.readlines()
+    with open(self.package_path+'/'+'package.xml', 'w') as outfile:
+      for line in m_template:
+         outfile.write(text.sectsub(text.tagsub(line)))
+
+# ros_build AND catkin
+  def update_xmlfile(self):
+    if self.build_system == 'ros_build':
+      self.update_manifest()
+    else:
+      self.update_package_catkin()
+  
 
 # ros_build AND catkin
   def gen_msg(self,msg_name):
@@ -232,7 +336,7 @@ class ros_package():
       for line in s_template:
 	      outfile.write(text.sectsub(text.tagsub(line)))
 
-#  rosbuild/catkin ???
+#  ros_build and catkin
   def add_node(self,node):
     if node.lang == 'C++':
       self.add_node_list(node.node_name)
@@ -250,7 +354,7 @@ class ros_package():
 
 # ros_build AND catkin
   def add_node_list(self,node_name):
-    self.get_node_list_rosbuild()
+    self.get_node_list()
     if not node_name in self.node_list:
       self.node_list.append(node_name)
     else:
@@ -258,7 +362,7 @@ class ros_package():
 
 # ros_build AND catkin
   def check_node_name(self,node_name):
-    self.get_node_list_rosbuild()
+    self.get_node_list()
     if not node_name in self.node_list:
       return 0
     else:
@@ -333,11 +437,16 @@ class ros_package():
 
 if __name__ == '__main__':
   # create a test package:  name = "pc" ros workspace = "/Users ... "
-   a = ros_package('pc','/Users/Danying/Dropbox/ROSworkspace/ros_node_generator')
-   #a.get_node_list_rosbuild()
-   #print(a.node_list)
-   a.edit_custom_msg()
-   a.gen_msg('lol')
+   a = ros_package('beginner_tutorials','/home/danying/ROSWorkspace/ros_node_generator')
+   a.set_build_system('catkin')
+   print(a.package_path)
+   a.get_dependency_list()
+   a.get_node_list()
+   print(a.dependency_list)
+   a.update_cmake_catkin()
+
+   #a.edit_custom_msg()
+   #a.gen_msg('lol')
 
 
 

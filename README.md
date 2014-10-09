@@ -51,5 +51,5 @@ RNA Features:
 - steps for creating custom srv
 - robust to user input: dealing with random inputs
 - auto generation/update CMakelist.txt
-- auto generation/update manifest.xml
+- auto generation/update manifest.xml/package.xml
 

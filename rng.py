@@ -34,19 +34,9 @@ for line in initcode:
 
 ####################### Query user for details ###########################
 ##  Package name ##
-pkg = raw_input('Enter your package name ['+pkg+']: (it should exist already)') or pkg
-my_rospkg = ros_package(pkg,rws)
-my_rospkg.set_build_system(ros_build_system)
+pkg = raw_input('Enter your package name: ') or pkg
+my_rospkg = ros_package(pkg,rws,ros_build_system)
 my_rospkg.create_package_folder()
-
-# create msg and srv directories if nesc
-msgdir = rws+'src/'+pkg+'/msg/'
-print 'Checking for msg dir at: '+msgdir
-if not os.path.exists(msgdir):
-  os.mkdir(msgdir)   # create the msg directory
-srvdir = rws+'src/'+pkg+'/srv/'
-if not os.path.exists(srvdir):
-  os.mkdir(srvdir)   # create the msg directory
 
 
 ## test for proper ROS environment setting of the package using rospkg library ##
@@ -62,12 +52,8 @@ except Exception as exc:
   print '  in ROS workspace: '+rws
   print 'Ros exception: '+name_of_exception
   print '\n\nPlease check your ROS environment'
-  print ' 1) did you already:'
-  print '      1.1) create and initialize your package:'
-  print '            a) mkdir -p src/packagename'
-  print '            b) (catkin_create_pkg or roscreate-pkg)'
-  print '      1.2) cd '+rws+' and build your package  (catkin_make)'
-  print ' 2) cd '+rws+'; source devel/setup.bash'
+  print ' 1) did you already create and initialize your package (catkin_create_pkg or roscreate-pkg)'
+  print ' 2) source devel/setup.bash'
   print ''
   print 'Test your ros setup:'
   tmpstr = pkg[:3]
@@ -81,12 +67,8 @@ except Exception as exc:
 node_name = pkg + '_node'
 node_name = raw_input('Enter your new node name: ['+node_name+ ']: ') or node_name
 while my_rospkg.check_node_name(node_name):
-  t = raw_input('ROS node ['+node_name+'] exists in package '+pkg+', enter another name: (or CR use '+node_name+')') or node_name
-  if (t == node_name):
-    break
- 
-  
-  
+  node_name = raw_input('ROS node ['+node_name+'] exists in package '+pkg+', enter another name:') or node_name
+
 ## Language ##
 lang = raw_input('Enter your language: [Python or C++]: ') or lang
 while 1 :
@@ -266,7 +248,7 @@ while 1:
 
 ####################### Generate basic files ###########################
 my_rospkg.add_node(rosnd)
-my_rospkg.update_manifest()
+my_rospkg.update_xmlfile()
 my_rospkg.update_cmake()
 
 

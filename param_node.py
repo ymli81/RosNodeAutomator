@@ -20,13 +20,13 @@
 #  Start by reading and editing this file.   When done, save this and run:
 #  > rng.py
 
+
 # select your build system
-ros_build_system = 'catkin'
-#ros_build_system = 'ros_build'
+#ros_build_system = 'catkin'
+ros_build_system = 'ros_build'
 
 # path to your ROS workspace
-#examples:
-rws = os.getcwd()   # use the current working directory
+rws = '/home/danying/ROSWorkspace/ros_node_generator/'
 #rws = '/home/user/Projects/ros_workspace/'     # an existing ROS workspace
 
 # name of ROS package
