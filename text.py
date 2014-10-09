@@ -170,6 +170,7 @@ def sectsub(s):
   t = t.replace('$SRV_ADD$',srv_add)       # catkin add srv file in Cmakelist.txt
   t = t.replace('$SVVs$',srv_init_list)     # request variable list in .srv for init
   t = t.replace('$SRVs$', srv_var_list)    # message variables in .srv for creating the .srv
+  t = t.replace('PKG',pkg)
   return t
 
 
