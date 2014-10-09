@@ -114,7 +114,7 @@ class ros_package():
        self.dependency_list = []
 
 # ros_build only
-  def get_node_list(self):
+  def get_node_list_rosbuild(self):
     self.node_list = []
     try:
       with open(self.package_path+'/'+'CMakeLists.txt', 'r') as inputfile: # can't read an outfile!
@@ -250,7 +250,7 @@ class ros_package():
 
 # ros_build AND catkin
   def add_node_list(self,node_name):
-    self.get_node_list()
+    self.get_node_list_rosbuild()
     if not node_name in self.node_list:
       self.node_list.append(node_name)
     else:
@@ -258,7 +258,7 @@ class ros_package():
 
 # ros_build AND catkin
   def check_node_name(self,node_name):
-    self.get_node_list()
+    self.get_node_list_rosbuild()
     if not node_name in self.node_list:
       return 0
     else:
@@ -334,7 +334,7 @@ class ros_package():
 if __name__ == '__main__':
   # create a test package:  name = "pc" ros workspace = "/Users ... "
    a = ros_package('pc','/Users/Danying/Dropbox/ROSworkspace/ros_node_generator')
-   #a.get_node_list()
+   #a.get_node_list_rosbuild()
    #print(a.node_list)
    a.edit_custom_msg()
    a.gen_msg('lol')

@@ -39,6 +39,15 @@ my_rospkg = ros_package(pkg,rws)
 my_rospkg.set_build_system(ros_build_system)
 my_rospkg.create_package_folder()
 
+# create msg and srv directories if nesc
+msgdir = rws+'src/'+pkg+'/msg/'
+print 'Checking for msg dir at: '+msgdir
+if not os.path.exists(msgdir):
+  os.mkdir(msgdir)   # create the msg directory
+srvdir = rws+'src/'+pkg+'/srv/'
+if not os.path.exists(srvdir):
+  os.mkdir(srvdir)   # create the msg directory
+
 
 ## test for proper ROS environment setting of the package using rospkg library ##
 try:
@@ -72,8 +81,12 @@ except Exception as exc:
 node_name = pkg + '_node'
 node_name = raw_input('Enter your new node name: ['+node_name+ ']: ') or node_name
 while my_rospkg.check_node_name(node_name):
-  node_name = raw_input('ROS node ['+node_name+'] exists in package '+pkg+', enter another name:') or node_name
-
+  t = raw_input('ROS node ['+node_name+'] exists in package '+pkg+', enter another name: (or CR use '+node_name+')') or node_name
+  if (t == node_name):
+    break
+ 
+  
+  
 ## Language ##
 lang = raw_input('Enter your language: [Python or C++]: ') or lang
 while 1 :
@@ -111,6 +124,7 @@ while 1:
   pkgd = pkg
   pkgd = raw_input('Enter the package that contains your message ['+pkgd+']: ') or pkgd
 
+  # get the files for the desired package
   a = ros_files(pkgd)
   a.get_package_path()
 
