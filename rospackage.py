@@ -28,10 +28,9 @@ class ros_package():
     self.build_system = bs
     self.package_name = name
     self.rws = rws
-    self.package_path = rws+'/'+name  # is this rosbuild style?
-    #self.package_path = rws+'src/'+name  # catkin style
-    self.msg_path = self.package_path + '/msg'
-    self.srv_path = self.package_path + '/srv'
+    self.package_path = ''
+    self.msg_path = ''
+    self.srv_path = ''
     self.node_list = []   #node list from CMakelist.txt
     self.msg_list = []
     self.srv_list = []
@@ -40,6 +39,8 @@ class ros_package():
     self.srv_flag = 0
     self.license = ''
     self.email = ''
+    self.new_msg =''
+    self.new_srv =''
 
   def set_build_system(self, bs):
     self.build_system = bs
@@ -49,13 +50,17 @@ class ros_package():
 
   def set_package_rws(self,rws):
     self.rws = rws
-    self.package_path = self.rws + 'src/' + self.package_name
+    #self.package_path = self.rws + 'src/' + self.package_name
 
   def set_package_path(self):
     if self.build_system == 'ros_build':
       self.package_path = self.rws+self.package_name # is this rosbuild style?
+      self.msg_path = self.package_path + '/msg'
+      self.srv_path = self.package_path + '/srv'
     elif self.build_system == 'catkin':
       self.package_path = self.rws+'src/'+self.package_name
+      self.msg_path = self.package_path + '/msg'
+      self.srv_path = self.package_path + '/srv'
     else:
       print('Unknown build environment. Please specify your build system in param_node.py')
 
@@ -207,6 +212,7 @@ class ros_package():
 # catkin only
   def update_cmake_catkin(self):
     text.exe_list = ''
+    text.catkin_dependency_list = ''
     for i in self.node_list:
       text.node_name = i
       text.exe_list = text.exe_list + text.tagsub(text.executable_catkin)
@@ -214,14 +220,19 @@ class ros_package():
     if (self.msg_flag == 1) or (self.srv_flag == 1):
       text.msg_gen = 'generate_messages(DEPENDENCIES std_msgs)'
       if self.msg_flag == 1: 
+        text.msg_list = text.msg_list + self.new_msg
         text.msg_add = text.tagsub(text.msg_add_file)
+        self.new_msg = ''
       if self.srv_flag == 1:
+        text.srv_list = text.srv_list + self.new_srv
         text.srv_add = text.tagsub(text.srv_add_file)
+        self.new_Srv = ''
     else:
       text.msg_gen = ''
       text.msg_add = ''
       text.srv_add = ''
     for i in self.dependency_list:
+      print(i)
       text.catkin_dependency_list = text.catkin_dependency_list + i +' '
     self.gen_cmake()
 
@@ -322,7 +333,8 @@ class ros_package():
       m_template = mfile.readlines()
     with open(self.msg_path+'/'+msg_name+'.msg', 'w') as outfile:
       for line in m_template:
-	      outfile.write(text.sectsub(text.tagsub(line)))
+        outfile.write(text.sectsub(text.tagsub(line)))
+    self.new_msg = msg_name+'.msg'
 
 # ros_build AND catkin
   def gen_srv(self,srv_name):
@@ -336,7 +348,8 @@ class ros_package():
       s_template = sfile.readlines()
     with open(self.srv_path+'/'+srv_name+'.srv', 'w') as outfile:
       for line in s_template:
-	      outfile.write(text.sectsub(text.tagsub(line)))
+	outfile.write(text.sectsub(text.tagsub(line)))
+    self.new_srv = srv_name+'.srv'
 
 #  ros_build and catkin
   def add_node(self,node):
@@ -351,7 +364,7 @@ class ros_package():
 # ros_build only
   def add_dependency(self,dependency):
     self.get_dependency_list()
-    if not dependency in self.dependency_list:
+    if not dependency in self.dependency_list and not dependency==self.package_name:
       self.dependency_list.append(dependency)
 
 # ros_build AND catkin
@@ -449,6 +462,4 @@ if __name__ == '__main__':
 
    #a.edit_custom_msg()
    #a.gen_msg('lol')
-
-
 

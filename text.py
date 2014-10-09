@@ -103,7 +103,7 @@ executable_rosbuild = 'rosbuild_add_executable($RNN$ src/$RNN$.cpp)\n'
 
 
 #catkin package and cmakelist
-depend_pkg_catkin = '<build_depend>$PGD$</build_depend>\n  <run_depend>$PGD$</run_depend\n  '
+depend_pkg_catkin = '<build_depend>$PGD$</build_depend>\n  <run_depend>$PGD$</run_depend>\n  '
 depend_msg =  '<build_depend>message_generation</build_depend>\n  <run_depend>message_runtime</run_depend>\n  '
 executable_catkin = 'add_executable($RNN$ src/$RNN$.cpp)\ntarget_link_libraries($RNN$ ${catkin_LIBRARIES})\n'
 msg_list = srv_list = ' '

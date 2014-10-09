@@ -22,11 +22,12 @@
 
 
 # select your build system
-#ros_build_system = 'catkin'
-ros_build_system = 'ros_build'
+ros_build_system = 'catkin'
+#ros_build_system = 'ros_build'
 
 # path to your ROS workspace
 rws = '/home/danying/ROSWorkspace/ros_node_generator/'
+rws = '/home/ray/catkin_ws/'
 #rws = '/home/user/Projects/ros_workspace/'     # an existing ROS workspace
 
 # name of ROS package
