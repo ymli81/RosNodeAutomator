@@ -148,7 +148,7 @@ class ros_node:
           text.arg = text.srv_obj+'.'+l[1]
         else:
           text.arg = text.arg +', '+text.srv_obj+'.'+l[1]
-        if l[0].startswith('int') or l[0].startswith('float') or l[0].startswith('double'):
+        if l[0].startswith('int') or l[0].startswith('float'):
           text.val = '0'
         elif l[0].startswith('string'):
           text.val = '"please change this"'
