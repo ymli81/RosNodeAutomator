@@ -428,7 +428,7 @@ class ros_package():
         break
       else:
         while 1:
-          req = raw_input('Enter the type of request variable '+str(var_num+1)+', [default: '+text.var_type+'], (n for stop)') or text.var_type
+          text.var_type = raw_input('Enter the type of request variable '+str(var_num+1)+', [default: '+text.var_type+'], (n for stop)') or text.var_type
           if (req[0]=='n') or (req[0] == 'N'):
             break
           else:

@@ -34,7 +34,7 @@ for line in initcode:
 
 ####################### Query user for details ###########################
 ##  Package name ##
-pkg = raw_input('Enter your package name: ') or pkg
+pkg = raw_input('Enter your package name: default [' + pkg +']:') or pkg
 my_rospkg = ros_package(pkg,rws,ros_build_system)
 my_rospkg.create_package_folder()
 
@@ -214,16 +214,16 @@ while 1:
       srv = srv[0:end]
       custom_srv_flag = 0
     elif (idx > len(a.service_list) or idx == 0) and a.service_list:
-      srv = raw_input('Unknown service type, creating a custom service type in package '+ pkg+'. Name your service type: ')
+      srv = raw_input('Unknown service type, creating a custom service type in package '+ pkg+'. Name your service file: ')
       pkgd = pkg
       my_rospkg.srv_flag = 1
       custom_srv_flag = 1
     else:
-      srv = raw_input('Empty service list, creating a custom service type in package '+ pkg+'. Name your service type: ')
+      srv = raw_input('Empty service list, creating a custom service type in package '+ pkg+'. Name your service file: ')
       pkgd = pkg
       my_rospkg.srv_flag = 1
       custom_srv_flag = 1
-    srv_name = srv+'_name'
+    srv_name = srv+'_service'
     srv_name = raw_input('Enter the name of your service: default ['+srv_name+']') or srv_name
     if custom_srv_flag:
       my_rospkg.edit_custom_srv()
