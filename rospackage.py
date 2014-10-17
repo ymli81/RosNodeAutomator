@@ -428,11 +428,12 @@ class ros_package():
         break
       else:
         while 1:
-          text.var_type = raw_input('Enter the type of request variable '+str(var_num+1)+', [default: '+text.var_type+'], (n for stop)') or text.var_type
+          req = raw_input('Enter the type of request variable '+str(var_num+1)+', [default: '+text.var_type+'], (n for stop)') or text.var_type
           if (req[0]=='n') or (req[0] == 'N'):
             break
           else:
             var_num += 1
+            text.var_type = req
             text.msv = 'my_request_var'+ str(var_num)
             text.srv_var_list = text.srv_var_list + text.tagsub(text.srv_list_element)
 
@@ -445,6 +446,7 @@ class ros_package():
             break
           else:
             var_num += 1
+            text.var_type = req
             text.msv = 'my_response_var'+ str(var_num)
             text.srv_var_list = text.srv_var_list + text.tagsub(text.srv_list_element)
       break
