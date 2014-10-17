@@ -51,7 +51,7 @@ msg_callback = {'Python': '''def $CLB$($MSG$): rospy.loginfo("$RNN$: I got messa
   		                  }\n
 		                '''
   	       }
-publisher =  {'Python': '$POB$  = rospy.Publisher("$TPC$",$MSG$)\n  ',
+publisher =  {'Python': '$POB$  = rospy.Publisher("$TPC$",$MSG$,1000)\n  ',
               'C++':  'ros::Publisher $POB$ = nh.advertise<$PGD$::$MSG$>("$TPC$", 1000);\n',
              }
 
