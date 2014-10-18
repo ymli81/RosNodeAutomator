@@ -48,6 +48,10 @@ subscriber = {'Python' : '$SOB$ = rospy.Subscriber("$TPC$", $MSG$, $CLB$)\n  ',
 msg_callback = {'Python': '''def $CLB$($MSG$): rospy.loginfo("$RNN$: I got message on topic '$TPC$")\n''',
                 'C++':  '''void $CLB$(const $PGD$::$MSG$ConstPtr& $MSG$) {
  		                   ROS_INFO("$RNN$: I got message on topic '$TPC$'");
+ 		                   // how to print the message variables
+                                   // ex 1: string message:
+                                   // std::string msg = $MSG$->{variable name};
+    				   // ROS_INFO("$RNN$:   msg: %s",msg.c_str());
   		                  }\n
 		                '''
   	       }
@@ -132,7 +136,7 @@ def tagsub(s):
   #t = t.replace('$CBA$', cb_arg)          # callback argument
   t = t.replace('$MOB$', msg_obj)         # message object in node file
   t = t.replace('$TYP$', var_type)        # message type in the .msg
-  t = t.replace('$MSV$', msv)              # message variable in .msg
+  t = t.replace('$MSV$', msv)             # message variable in .msg
   t = t.replace('$SRV$', srv)             # service name of .srv
   t = t.replace('$SNM$', srv_name)        # service name similar to topic
   t = t.replace('$CLI$',client_obj)       # client object

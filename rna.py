@@ -51,10 +51,8 @@ my_rospkg.create_package_folder()
 ## test for proper ROS environment setting of the package using rospkg library ##
 try:
   print 'Testing ros core setup.'
-  ros_root = rospkg.get_ros_root()
-  print '    step 1'
-  rp = rospkg.RosPack()
-  print '    step 2'
+  ros_root = rospkg.get_ros_root() 
+  rp = rospkg.RosPack() 
   path = rp.get_path(pkg)
   print 'Ros system working properly!'
 except Exception as exc:
