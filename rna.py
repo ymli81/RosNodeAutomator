@@ -36,7 +36,8 @@ for line in initcode:
 ######################## Check ROS workspace #########################
 
 if not os.path.exists(rws):
-  print ('  Apparently your ROS workspace does not exist yet.  Please create it or check your param_node.py file')
+  print ('  Apparently your ROS workspace '+rws+' does not exist yet.')
+  print ('       ... Please create it or check your param_node.py file')
   exit(0)
   
   

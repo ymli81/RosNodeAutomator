@@ -112,12 +112,14 @@ class ros_files():
   def load_msg(self,msg):
     if self.find_msgs():
        if msg+'.msg' in self.message_list:
-         with open(self.package_path+'/msg/'+ msg+'.msg', 'r') as msgfile:
+	 msg_filename = self.package_path+'/msg/'+ msg+'.msg'
+         with open(msg_filename, 'r') as msgfile:
+	   print 'Scanning message file: '+msg_filename
            tmp = msgfile.readlines()
          for l in tmp:
-           if l.startswith('#'): print('this is a comment line')
-           elif l.startswith('Header'): print('this is a header line')
-           elif l.startswith('\n'): print('this is an empty line')
+           if l.startswith('#'): print('found a comment line')
+           elif l.startswith('Header'): print('found is a header line')
+           elif l.startswith('\n'): print('found an empty line')
            else:
              tline = l.split(' ')
              ttype = tline[0]

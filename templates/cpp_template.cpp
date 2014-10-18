@@ -56,7 +56,9 @@ $SVVs$
 
 
 while(ros::ok()) {
+  // message publish calls
   $PBLs$
+  // service calls
   $SCCs$
   
   ROS_INFO("$RNN$: main loop");

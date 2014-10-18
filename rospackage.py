@@ -413,7 +413,7 @@ class ros_package():
         var_num += 1
         text.msv = 'my_message_var'+ str(var_num)
         print 'New message variable: '+text.msv
-        text.var_type = raw_input('New message variable type? [default: '+text.var_type+']') or text.var_type
+        text.var_type = raw_input('New message variable type? [ex: int32, string, float64] [default: '+text.var_type+']') or text.var_type
         text.msg_var_list = text.msg_var_list + text.tagsub(text.msv_list_element)
 
 # ros_build AND catkin
