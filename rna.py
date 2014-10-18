@@ -32,6 +32,14 @@ with open('param_node.py') as pfile:
 for line in initcode:
   exec (line)
 
+
+######################## Check ROS workspace #########################
+
+if not os.path.exists(rws):
+  print ('  Apparently your ROS workspace does not exist yet.  Please create it or check your param_node.py file')
+  exit(0)
+  
+  
 ####################### Query user for details ###########################
 ##  Package name ##
 pkg = raw_input('Enter your package name: default [' + pkg +']:') or pkg
@@ -43,7 +51,9 @@ my_rospkg.create_package_folder()
 try:
   print 'Testing ros core setup.'
   ros_root = rospkg.get_ros_root()
+  print '    step 1'
   rp = rospkg.RosPack()
+  print '    step 2'
   path = rp.get_path(pkg)
   print 'Ros system working properly!'
 except Exception as exc:
@@ -52,8 +62,9 @@ except Exception as exc:
   print '  in ROS workspace: '+rws
   print 'Ros exception: '+name_of_exception
   print '\n\nPlease check your ROS environment'
-  print ' 1) did you already create and initialize your package (catkin_create_pkg or roscreate-pkg)'
-  print ' 2) source devel/setup.bash'
+  print ' 1) Is roscore running?'
+  print ' 2) did you already create and initialize your package (catkin_create_pkg or roscreate-pkg)'
+  print ' 3) catkin_make ; source devel/setup.bash'
   print ''
   print 'Test your ros setup:'
   tmpstr = pkg[:3]
