@@ -204,7 +204,7 @@ while 1:
   a = ros_files(pkgd)
   a.get_package_path()
 
-#if the dependent package does not exist or the dependency is same as the user package --> create/use a custom .msg file in user package
+#if the dependent package does not exist or the dependency is same as the user package --> create/use a custom .srv file in user package
   if not a.package_found and pkg==pkgd:
     a.set_package_path(my_rospkg.package_path)
   a.list_srvs()
@@ -216,14 +216,15 @@ while 1:
   else:
      if direction == 'server':
        print('You cannot serve a nonexisting service type')
-       direction = 'unknown'
+       print('Please manually create your service file in '+my_rospkg.package_path+'/srv ')
+       exit(0)
 
   if direction == 'client':
     if not idx > len(a.service_list) and idx>0 and a.service_list :
       srv = a.service_list[idx-1]
       end = srv.find('.srv')
       srv = srv[0:end]
-      custom_srv_flag = 0
+      custom_srv_flag = 1
     elif (idx > len(a.service_list) or idx == 0) and a.service_list:
       srv = raw_input('Unknown service type, creating a custom service type in package '+ pkg+'. Name your service file: ')
       pkgd = pkg
