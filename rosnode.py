@@ -214,6 +214,7 @@ class ros_node:
     with open(codefilename, 'w') as outfile:
       for line in filetemplate:
         outfile.write(text.sectsub(text.tagsub(line)))
+      os.chmod(codefilename, 775)  # make it executable
       
 
 if __name__ == '__main__':

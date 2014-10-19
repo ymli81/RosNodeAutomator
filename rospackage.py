@@ -58,7 +58,7 @@ class ros_package():
       self.msg_path = self.package_path + '/msg'
       self.srv_path = self.package_path + '/srv'
     elif self.build_system == 'catkin':
-      self.package_path = self.rws+'src/'+self.package_name
+      self.package_path = self.rws+'/src/'+self.package_name
       self.msg_path = self.package_path + '/msg'
       self.srv_path = self.package_path + '/srv'
     else:

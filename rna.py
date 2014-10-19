@@ -54,6 +54,7 @@ try:
   ros_root = rospkg.get_ros_root() 
   rp = rospkg.RosPack() 
   path = rp.get_path(pkg)
+  print 'Your package path is: '+ path
   print 'Ros system working properly!'
 except Exception as exc:
   name_of_exception = type(exc).__name__
