@@ -166,7 +166,7 @@ class ros_package():
     if self.build_system == 'ros_build':
       with open('templates/CMakeListTemplate_rosbuild.txt', 'r') as cfile:
         cm_template = cfile.readlines()
-    else:
+    else:  #  Catkin version of CMakeLists
       text.pkg = self.package_name
       with open('templates/CMakeListTemplate_catkin.txt', 'r') as cfile:
         cm_template = cfile.readlines()
@@ -211,6 +211,8 @@ class ros_package():
 
 # catkin only
   def update_cmake_catkin(self):
+    print 'Updating CMakeLists.txt (catkin)'
+    print 'msg_flag: '+str(self.msg_flag)+'   srv_flag: '+str(self.srv_flag)
     text.exe_list = ''
     text.catkin_dependency_list = ''
     for i in self.node_list:
@@ -224,6 +226,7 @@ class ros_package():
         text.msg_add = text.tagsub(text.msg_add_file)
         self.new_msg = ''
       if self.srv_flag == 1:
+	print 'updating service list in CMakeLists(catkin)'
         text.srv_list = text.srv_list + self.new_srv
         text.srv_add = text.tagsub(text.srv_add_file)
         self.new_Srv = ''
@@ -337,7 +340,7 @@ class ros_package():
     self.new_msg = msg_name+'.msg'
 
 # ros_build AND catkin
-  def gen_srv(self,srv_name):
+  def gen_srv(self,srv_name):  # generate a new service file
     if not os.path.exists(self.srv_path):
       os.makedirs(self.srv_path)
     self.srv_list = os.listdir(self.srv_path)
@@ -404,10 +407,12 @@ class ros_package():
     text.msg_var_list = ''
     var_num = 0
     text.var_type = 'int32'
+    seq = ''
     while 1:
-      res = raw_input('Do you want to add a variable into your message file? (y for yes, n/CR for no) ') or -1
+      res = raw_input('\nDo you want to add'+seq+' a variable into your message file? (y for yes, n/CR for no) ') or -1
+      seq = ' another'
       if (res == -1) or (res[0]=='n') or (res[0] == 'N'):
-        print('Do not forget to edit the .msg file before compile')
+        print('OK, do not forget to edit the .msg file before compile')
         break
       else:
         var_num += 1
@@ -421,10 +426,12 @@ class ros_package():
     text.srv_var_list = ''
     var_num = 0
     text.var_type = 'int32'
+    seq = ''
     while 1:
-      res = raw_input('Do you want to add a variable into your srv file? (y for yes, n/CR for no) ') or -1
+      res = raw_input('\nDo you want to add'+seq+' a variable into your srv file? (y for yes, n/CR for no) ') or -1
+      seq = ' another'
       if (res == -1) or (res[0]=='n') or (res[0] == 'N'):
-        print('Do not forget to edit the .srv file before compile')
+        print('OK, please do not forget to edit the .srv file before compile')
         break
       else:
         while 1:

@@ -32,7 +32,7 @@ rws = '/home/blake/Projects/RosNodeAutomator/Ros_ws'
 #rws = '/home/user/Projects/ros_workspace/'     # an existing ROS workspace
 
 # name of ROS package
-pkg = 'test_package'
+pkg = 'bh3'
 # package text description
 pkd = 'A first package for testing the ros node generator'
 
@@ -50,16 +50,16 @@ direction = 'incoming'
 
 # First, enter name of custom message files you have in ~package/msg/
 # name of .msg file (describing your message)
-msg = ''
-msg_flag = 0
-srv_flag = 0
+#msg = ''
+#msg_flag = 0
+#srv_flag = 0
 # name of one of the variables defined in the message (ideally a string)
 # if you have more than one variable (such as from multiple .msg files),
 # you will need to add those manually
 
 ### Services
 # name of  .srv file for your service (found in ~package/srv/)
-srv = 'custom_srv'
+#srv = 'custom_srv'
  
 
 

@@ -64,7 +64,8 @@ except Exception as exc:
   print '\n\nPlease check your ROS environment'
   print ' 1) Is roscore running?'
   print ' 2) did you already create and initialize your package (catkin_create_pkg or roscreate-pkg)'
-  print ' 3) catkin_make ; source devel/setup.bash'
+  print ' 3) in your Ros-workspace: catkin_make ';
+  print ' 4) in your RNA dir, source <RosWs>/devel/setup.bash'
   print ''
   print 'Test your ros setup:'
   tmpstr = pkg[:3]
@@ -98,8 +99,10 @@ rosnd = ros_node(node_name,lang,my_rospkg.package_path)
 ########################################################################################
 #
 #                           Get and process the Messages
-while 1:
-  resp = raw_input('Do you want to add a message? (y for yes, n/CR for no): ') or -1
+rep = ''
+while 1:  
+  resp = raw_input('Do you want to add a'+rep+' message? (y for yes, n/CR for no): ') or -1
+  rep = 'nother'
   if (resp == -1) or (resp[0]=='n') or (resp[0] == 'N'):
     break
   direction = raw_input('[P]ublish or [S]ubscribe?: ')
@@ -143,6 +146,7 @@ while 1:
       end = msg.find('.msg')
       msg = msg[0:end]
       custom_msg_flag = 0
+      my_rospkg.msg_flag = 1
     else:
       msg = raw_input('Empty or unknown message list, creating a custom message in package '+ pkg+'. Name your message: ')
       pkgd = pkg
@@ -184,8 +188,10 @@ while 1:
 ########################################################################################
 #
 #                           Get and process the Services
+rep = ''
 while 1:
-  resp = raw_input('Do you want to add a service? (y for yes, n/CR for no) ') or -1
+  resp = raw_input('Do you want to add a'+rep+' service? (y for yes, n/CR for no) ') or -1
+  rep = 'nother'
   if (resp == -1) or (resp[0]=='n') or (resp[0] == 'N '):
     break
   direction = raw_input('[C]lient or [S]erver?: ')
@@ -215,16 +221,18 @@ while 1:
      idx = int(idx)  #  careful: a python 'feature' is that entering a decimal ('2.0') will break this!
   else:
      if direction == 'server':
-       print('You cannot serve a nonexisting service type')
+       print('Sorry- I cant yet work with a nonexisting service type')
        print('Please manually create your service file in '+my_rospkg.package_path+'/srv ')
+       print(' ... then restart rna.py')
        exit(0)
 
   if direction == 'client':
-    if not idx > len(a.service_list) and idx>0 and a.service_list :
+    if not idx > len(a.service_list) and idx>0 and a.service_list :  # we found existing service file
       srv = a.service_list[idx-1]
       end = srv.find('.srv')
       srv = srv[0:end]
-      custom_srv_flag = 1
+      my_rospkg.srv_list.append(srv + '.srv ')   # can this cause CMakeLists to come out right?
+      custom_srv_flag = 0
     elif (idx > len(a.service_list) or idx == 0) and a.service_list:
       srv = raw_input('Unknown service type, creating a custom service type in package '+ pkg+'. Name your service file: ')
       pkgd = pkg
@@ -253,6 +261,7 @@ while 1:
     srv_name = raw_input('Enter the name of your service: default ['+srv_name+']') or srv_name
     cb_name =  srv +'CB'
     cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
+    my_rospkg.srv_flag = 1  # this is supposed to get CMakeLists.txt right for services
     rosnd.add_server(pkgd,srv,srv_name,cb_name)
 
   my_rospkg.add_dependency(pkgd)
