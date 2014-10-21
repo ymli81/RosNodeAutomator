@@ -122,8 +122,10 @@ while 1:
   a.get_package_path()
 
 #if the dependent package does not exist or the dependency is same as the user package --> create/use a custom .msg file in user package
-  if not a.package_found and pkgd==pkg:     
+  if not a.package_found or pkgd==pkg:     
     a.set_package_path(my_rospkg.package_path)
+    my_rospkg.msg_flag = 1
+
   a.list_msgs()
   msg = ''
   idx = 0
@@ -142,31 +144,30 @@ while 1:
       msg = a.message_list[idx-1]
       end = msg.find('.msg')
       msg = msg[0:end]
-      custom_msg_flag = 0
+      create_custom_msg_flag = 0
     else:
       msg = raw_input('Empty or unknown message list, creating a custom message in package '+ pkg+'. Name your message: ')
       pkgd = pkg
       my_rospkg.msg_flag = 1
-      custom_msg_flag = 1
+      create_custom_msg_flag = 1
 
    #############################################################
    #
    #     Get and process the topic for each publisher message
     topic = msg+'_topic'
     topic = raw_input('Enter the topic of your message ['+topic+']: ') or topic
-    if custom_msg_flag:
-      my_rospkg.edit_custom_msg()
-      my_rospkg.gen_msg(msg)
+
     rosnd.add_publisher(pkgd,msg,topic)
 
   elif direction == 'subscribe':
+    create_custom_msg_flag = 0
     while idx > len(a.message_list):
       idx = raw_input('Unknown message, please re-enter the index of message you want to '+direction) or idx
       idx = int(idx)
     msg = a.message_list[idx-1]
     end = msg.find('.msg')
     msg = msg[0:end]
-
+    
    #############################################################
    #
    #     Get and process the topic for each subscriber message
@@ -175,6 +176,14 @@ while 1:
     cb_name =  topic+'_cb'
     cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
     rosnd.add_subscriber(pkgd,msg,topic,cb_name)
+
+  # generate or update files by flag:
+  if create_custom_msg_flag:
+    my_rospkg.edit_custom_msg()
+    my_rospkg.gen_msg(msg)
+  else:
+    if my_rospkg.msg_flag and pkgd == pkg: # we are using a pre-created custom message from the user package
+      my_rospkg.add_msg(msg)
 
   # this might be a dependency on own package (check?)
   my_rospkg.add_dependency(pkgd)
@@ -205,8 +214,10 @@ while 1:
   a.get_package_path()
 
 #if the dependent package does not exist or the dependency is same as the user package --> create/use a custom .srv file in user package
-  if not a.package_found and pkg==pkgd:
+  if not a.package_found or pkg==pkgd:
     a.set_package_path(my_rospkg.package_path)
+    my_rospkg.srv_flag = 1
+
   a.list_srvs()
   srv = ''
   idx = 0
@@ -220,29 +231,28 @@ while 1:
        exit(0)
 
   if direction == 'client':
-    if not idx > len(a.service_list) and idx>0 and a.service_list :
+    if not idx > len(a.service_list) and idx>0 and a.service_list : 
       srv = a.service_list[idx-1]
       end = srv.find('.srv')
       srv = srv[0:end]
-      custom_srv_flag = 1
+      create_custom_srv_flag = 0
     elif (idx > len(a.service_list) or idx == 0) and a.service_list:
       srv = raw_input('Unknown service type, creating a custom service type in package '+ pkg+'. Name your service file: ')
       pkgd = pkg
       my_rospkg.srv_flag = 1
-      custom_srv_flag = 1
+      create_custom_srv_flag = 1
     else:
       srv = raw_input('Empty service list, creating a custom service type in package '+ pkg+'. Name your service file: ')
       pkgd = pkg
       my_rospkg.srv_flag = 1
-      custom_srv_flag = 1
+      create_custom_srv_flag = 1
     srv_name = srv+'_service'
     srv_name = raw_input('Enter the name of your service: default ['+srv_name+']') or srv_name
-    if custom_srv_flag:
-      my_rospkg.edit_custom_srv()
-      my_rospkg.gen_srv(srv)
+
     rosnd.add_client(pkgd,srv,srv_name)
 
   elif direction == 'server':
+    create_custom_srv_flag = 0
     while idx > len(a.service_list):
       idx = raw_input('Unknown service type, please re-enter the index of service you want to use: ') or idx
       idx = int(idx)
@@ -254,6 +264,14 @@ while 1:
     cb_name =  srv +'CB'
     cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
     rosnd.add_server(pkgd,srv,srv_name,cb_name)
+
+  # generate or update files by flag:
+  if create_custom_srv_flag:
+    my_rospkg.edit_custom_srv()
+    my_rospkg.gen_srv(srv)
+  else:
+    if my_rospkg.srv_flag and pkgd == pkg: # we use a pre-created custom srv
+      my_rospkg.add_srv(srv)
 
   my_rospkg.add_dependency(pkgd)
 
