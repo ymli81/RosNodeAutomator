@@ -80,7 +80,7 @@ srv_callback = {'Python': 'def $CLB$(req): \n  rospy.loginfo("$RNN$: I got servi
 		                   '''
   	           }
 
-clientinits  = {'Python' : '''rospy.wait_for_service("$SNM$")\n  $CLI$ = rospy.ServiceProxy("$SNM$", $SRV$)\n  ''',
+clientinits  = {'Python' : '''print ('Waiting for service: $SNM$')\n  rospy.wait_for_service("$SNM$")\n  $CLI$ = rospy.ServiceProxy("$SNM$", $SRV$)\n  ''',
                'C++' : 'ros::ServiceClient $CLI$ = nh.serviceClient<$PGD$::$SRV$>("$SNM$");\n'}
 
 clientcalls  = {'Python' : 'try:\n      result = $CLI$($ARG$)\n      print(result)\n    except:print("Something wrong with client call $SNM$")',

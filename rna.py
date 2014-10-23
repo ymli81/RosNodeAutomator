@@ -146,13 +146,7 @@ while 1:
     if (not idx > len(a.message_list)) and (idx >0) and (a.message_list): # we have a valid message selection
       msg = a.message_list[idx-1]
       end = msg.find('.msg')
-      msg = msg[0:end]
-#<<<<<<< HEAD
-      #custom_msg_flag = 0
-      #my_rospkg.msg_flag = 1
-#=======
-      #create_custom_msg_flag = 0
-#>>>>>>> 5626db61a0fa244eed26bd0587aece8c139f803c
+      msg = msg[0:end] 
       create_custom_msg_flag = 0
     else:
       msg = raw_input('Empty or unknown message list, creating a custom message in package '+ pkg+'. Name your message: ')
@@ -271,7 +265,7 @@ while 1:
     srv = a.service_list[idx-1]
     end = srv.find('.srv')
     srv = srv[0:end]
-    srv_name = srv+'_name'
+    srv_name = srv+'_service'
     srv_name = raw_input('Enter the name of your service: default ['+srv_name+']') or srv_name
     cb_name =  srv +'CB'
     cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
