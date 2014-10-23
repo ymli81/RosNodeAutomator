@@ -221,15 +221,16 @@ class ros_package():
     text.msg_list, text.srv_list = self.process_cmake_catkin()
     if (self.msg_flag == 1) or (self.srv_flag == 1):
       text.msg_gen = 'generate_messages(DEPENDENCIES std_msgs)'
-      if self.msg_flag == 1: 
-        text.msg_list = text.msg_list + self.new_msg
+      if self.msg_flag == 1:
+        if not self.new_msg in text.msg_list:
+          text.msg_list = text.msg_list + self.new_msg
         text.msg_add = text.tagsub(text.msg_add_file)
         self.new_msg = ''
-      if self.srv_flag == 1:
-	print 'updating service list in CMakeLists(catkin)'
-        text.srv_list = text.srv_list + self.new_srv
+      if self.srv_flag == 1: 
+        if not self.new_srv in text.srv_list:
+          text.srv_list = text.srv_list + self.new_srv 
         text.srv_add = text.tagsub(text.srv_add_file)
-        self.new_Srv = ''
+        self.new_srv = ''
     else:
       text.msg_gen = ''
       text.msg_add = ''
@@ -339,6 +340,10 @@ class ros_package():
         outfile.write(text.sectsub(text.tagsub(line)))
     self.new_msg = msg_name+'.msg'
 
+# catkin only for updating cmakelist although is called regardless the build system
+  def add_msg(self, msg_name):
+    self.new_msg = msg_name+'.msg'
+
 # ros_build AND catkin
   def gen_srv(self,srv_name):  # generate a new service file
     if not os.path.exists(self.srv_path):
@@ -353,6 +358,11 @@ class ros_package():
       for line in s_template:
 	outfile.write(text.sectsub(text.tagsub(line)))
     self.new_srv = srv_name+'.srv'
+
+# catkin only for updating cmakelist although is called regardless the build system
+  def add_srv(self, srv_name):
+    self.new_srv = srv_name+'.srv'
+
 
 #  ros_build and catkin
   def add_node(self,node):
