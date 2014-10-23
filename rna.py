@@ -147,12 +147,13 @@ while 1:
       msg = a.message_list[idx-1]
       end = msg.find('.msg')
       msg = msg[0:end]
-<<<<<<< HEAD
-      custom_msg_flag = 0
-      my_rospkg.msg_flag = 1
-=======
+#<<<<<<< HEAD
+      #custom_msg_flag = 0
+      #my_rospkg.msg_flag = 1
+#=======
+      #create_custom_msg_flag = 0
+#>>>>>>> 5626db61a0fa244eed26bd0587aece8c139f803c
       create_custom_msg_flag = 0
->>>>>>> 5626db61a0fa244eed26bd0587aece8c139f803c
     else:
       msg = raw_input('Empty or unknown message list, creating a custom message in package '+ pkg+'. Name your message: ')
       pkgd = pkg
