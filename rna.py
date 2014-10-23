@@ -308,11 +308,14 @@ my_rospkg.add_node(rosnd)
 my_rospkg.update_xmlfile()
 my_rospkg.update_cmake()
 
-if (lang == "C++"):
-  print "\n\n You have selected a C++ node.  Please change to your ROS workspace and type"
+if (ros_build_system == 'catkin'):
+  print ("\n\n You have selected a "+lang+" node.  Please change to your ROS workspace and type")
   print "         > catkin_make "
   print " before testing your node."
-  
+else:
+  print ("\n\n You have selected a "+lang+" node.  Please roscd into your package and type")
+  print "         > make "
+  print " before testing your node."
 
 
 
