@@ -148,7 +148,7 @@ class ros_package():
             node_name = line[0][15:]
             self.node_list.append(node_name)
     except:
-      print('excepted')
+      print('''exception: I can't open CMakeLists.txt''')
       self.node_list = []
 
 # ros_build only
@@ -212,7 +212,7 @@ class ros_package():
 # catkin only
   def update_cmake_catkin(self):
     print 'Updating CMakeLists.txt (catkin)'
-    print 'msg_flag: '+str(self.msg_flag)+'   srv_flag: '+str(self.srv_flag)
+    #print 'msg_flag: '+str(self.msg_flag)+'   srv_flag: '+str(self.srv_flag)
     text.exe_list = ''
     text.catkin_dependency_list = ''
     for i in self.node_list:
@@ -445,8 +445,8 @@ class ros_package():
         break
       else:
         while 1:
-          req = raw_input('Enter the type of request variable '+str(var_num+1)+', [default: '+text.var_type+'], (n for stop)') or text.var_type
-          if (req[0]=='n') or (req[0] == 'N'):
+          req = raw_input('Enter the type of request variable '+str(var_num+1)+', [default: '+text.var_type+'], (CR or n for stop)') or text.var_type
+          if (req[0]=='n') or (req[0] == 'N') or (req[0] == '\n'):
             break
           else:
             var_num += 1
@@ -458,8 +458,8 @@ class ros_package():
         var_num = 0
         print '---'
         while 1:
-          req = raw_input('Enter the type of response variable '+str(var_num+1)+', [default: '+text.var_type+'], (n for stop)') or text.var_type
-          if (req[0]=='n') or (req[0] == 'N'):
+          req = raw_input('Enter the type of response variable '+str(var_num+1)+', [default: '+text.var_type+'], (CR or n for stop)') or text.var_type
+          if (req[0]=='n') or (req[0] == 'N') or (req[0] == '\n'):
             break
           else:
             var_num += 1

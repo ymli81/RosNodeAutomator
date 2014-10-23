@@ -23,6 +23,18 @@ from rospackage import ros_package
 from rosnode import ros_node
 import rospkg
 
+def frame(title, progbar):  
+  pbar = "[....................]" 
+  progj = int((len(pbar)-2)*progbar)
+  p2 = pbar[:progj+1] + '*' + pbar[progj+2:]
+  f1 = "#################################################################"+p2
+  f2 = "#                   " + title
+  f3 = "#"
+  print f1
+  print f2
+  print f3
+
+frame("Welcome", 0.0)
 print ('Welcome to ROS Node Automator  *****')
 print ('Please answer a few questions about your new node:')
 
@@ -41,6 +53,7 @@ if not os.path.exists(rws):
   exit(0)
   
   
+frame("Package Info", 0.1)
 ####################### Query user for details ###########################
 ##  Package name ##
 pkg = raw_input('Enter your package name: default [' + pkg +']:') or pkg
@@ -75,12 +88,14 @@ except Exception as exc:
   exit(0)
 
 
+frame("Node", 0.2)
 ## Node name ##
 node_name = pkg + '_node'
 node_name = raw_input('Enter your new node name: ['+node_name+ ']: ') or node_name
 while my_rospkg.check_node_name(node_name):
   node_name = raw_input('ROS node ['+node_name+'] exists in package '+pkg+', enter another name:') or node_name
 
+frame("Language", 0.25)
 ## Language ##
 lang = raw_input('Enter your language: [Python or C++]: ') or lang
 while 1 :
@@ -96,6 +111,7 @@ while 1 :
 rosnd = ros_node(node_name,lang,my_rospkg.package_path)
 
 
+frame("Messages", 0.35)
 ########################################################################################
 #
 #                           Get and process the Messages
@@ -116,6 +132,7 @@ while 1:
     else:
       direction = raw_input('Unknown message direction, enter [P]ublish or [S]ubscribe?:') or direction
 
+  frame("Package for Message File", 0.45)
 # get dependent package from input
   pkgd = pkg
   pkgd = raw_input('Enter the package that contains your message ['+pkgd+']: ') or pkgd
@@ -154,9 +171,10 @@ while 1:
       my_rospkg.msg_flag = 1
       create_custom_msg_flag = 1
 
-   #############################################################
-   #
-   #     Get and process the topic for each publisher message
+    frame("Message Topic", 0.55)
+    #############################################################
+    #
+    #     Get and process the topic for each publisher message
     topic = msg+'_topic'
     topic = raw_input('Enter the topic of your message ['+topic+']: ') or topic
 
@@ -192,7 +210,7 @@ while 1:
   my_rospkg.add_dependency(pkgd)
 
 
-
+frame("Services", 0.65)
 ########################################################################################
 #
 #                           Get and process the Services
@@ -217,6 +235,7 @@ while 1:
   pkgd = raw_input('Enter the package that contains your service, default package: [ '+pkgd+' ]') or pkgd
   a = ros_files(pkgd)
   a.get_package_path()
+
 
 #if the dependent package does not exist or the dependency is same as the user package --> create/use a custom .srv file in user package
   if not a.package_found or pkg==pkgd:
@@ -283,10 +302,17 @@ while 1:
   my_rospkg.add_dependency(pkgd)
 
 
+frame("Output Generation", 0.9)
 ####################### Generate basic files ###########################
 my_rospkg.add_node(rosnd)
 my_rospkg.update_xmlfile()
 my_rospkg.update_cmake()
+
+if (lang == "C++"):
+  print "\n\n You have selected a C++ node.  Please change to your ROS workspace and type"
+  print "         > catkin_make "
+  print " before testing your node."
+  
 
 
 
