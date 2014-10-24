@@ -24,6 +24,8 @@ pkg = node_name = pkgd = ''
 topic = msg = publisher_obj = subscriber_obj = clb = cb_arg = var_type = msg_obj = msv = ''
 ### tags services
 srv_name = srv = client_obj = server_obj = srv_obj = srv_var = val = arg = ''
+### ros workspace
+rws = ''
 
 ### text_elments
 # node file
@@ -120,12 +122,12 @@ srv_list_element = '$TYP$       $MSV$\n'
 
 
 def tagsub(s):
-  #t = t.replace('$RWS$', rws)             # ros workspace path
+  t = s.replace('$RWS$', rws)             # ros workspace path
   #t = t.replace('$PKD$', pkd)             # ros package description text
   #t = t.replace('$EML$', email)           # author email
   #t = t.replace('$NAM$', name)            # author name
   #t = t.replace('$LIC$', license)         # license statement (i.e. lgpl)
-  t = s.replace('$PKG$', pkg)             # ros package name
+  t = t.replace('$PKG$', pkg)             # ros package name
   t = t.replace('$RNN$', node_name)       # ros node name
   t = t.replace('$PGD$', pkgd)            # ros dependency package name for certain message
   t = t.replace('$TPC$', topic)           # message topic name

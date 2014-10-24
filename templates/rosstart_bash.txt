@@ -1,0 +1,4 @@
+roscore&
+cd $RWS$
+catkin_make
+source devel/setup.bash
