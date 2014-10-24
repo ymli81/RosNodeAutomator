@@ -25,7 +25,11 @@ from rosnode import ros_node
 import rospkg
 import text
 
+global first
+firstframe = 1
+
 def frame(title, progbar):  
+  global firstframe
   pbar = "[....................]" 
   progj = int((len(pbar)-2)*progbar)
   p2 = pbar[:progj+1] + '*' + pbar[progj+2:]
@@ -33,7 +37,9 @@ def frame(title, progbar):
   f1  = "################################################################# "+p2
   f2 = "#                   " + title
   f3 = "#"
-  print fm1
+  if firstframe==0:
+    print fm1
+  firstframe = 0  
   print "\n\n"+f1
   print f2
   print f3
@@ -329,7 +335,8 @@ while 1:
     srv_name = srv+'_service'
     srv_name = raw_input('Enter the name of your service: default ['+srv_name+']') or srv_name
     cb_name =  srv +'CB'
-    cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
+    # no need to confirm auto generated callback name - save time!
+    #cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
     my_rospkg.srv_flag = 1  # this is supposed to get CMakeLists.txt right for services
     rosnd.add_server(pkgd,srv,srv_name,cb_name)
 
@@ -350,13 +357,12 @@ my_rospkg.add_node(rosnd)
 my_rospkg.update_xmlfile()
 my_rospkg.update_cmake()
 
-<<<<<<< HEAD
-if (lang == "C++" and ros_build_system = 'catkin'):
-  frame('Special Reminder: ', 1.0)
-  print "\n\n You have selected a C++ node.  Please change to your ROS workspace and type"
+frame('Special Reminder: ', 1.0)
+if ((lang == "C++") and (ros_build_system == 'catkin')):
+  print "\n\n You have created a C++ node.  Please change to your ROS workspace and type"
   print "         > catkin_make "
   print " before testing your node."
-else:
+elif (ros_build_system == 'ros_build'):
   print ("\n\n You have created a "+lang+" node.  Please roscd into your package and type")
   print "         > make "
   print " before testing your node."
