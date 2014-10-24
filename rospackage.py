@@ -49,10 +49,14 @@ class ros_package():
     self.package_name = name
 
   def set_package_rws(self,rws):
-    self.rws = rws
-    #self.package_path = self.rws + 'src/' + self.package_name
+    if rws.endswith('/'):
+      self.rws = rws[:-1]
+    else:
+      self.rws = rws
+    
 
   def set_package_path(self):
+    self.set_package_rws(self.rws)
     if self.build_system == 'ros_build':
       self.package_path = self.rws+self.package_name # is this rosbuild style?
       self.msg_path = self.package_path + '/msg'
@@ -187,6 +191,7 @@ class ros_package():
 
 # ros_build only
   def update_cmake_rosbuild(self):
+    print 'Updating CMakeLists.txt (rosbuild)'
     text.exe_list = ''
     for i in self.node_list:
       text.node_name = i
@@ -470,15 +475,8 @@ class ros_package():
 
 
 if __name__ == '__main__':
-  # create a test package:  name = "pc" ros workspace = "/Users ... "
-   a = ros_package('beginner_tutorials','/home/danying/ROSWorkspace/ros_node_generator')
-   a.set_build_system('catkin')
-   print(a.package_path)
-   a.get_dependency_list()
-   a.get_node_list()
-   print(a.dependency_list)
-   a.update_cmake_catkin()
-
-   #a.edit_custom_msg()
-   #a.gen_msg('lol')
+   a = ros_package('beginner_tutorials','/home/danying/ROSWorkspace/ros_node_generator/','catkin')
+   a.set_package_rws(a.rws)
+   print(a.rws)
+ 
 

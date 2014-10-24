@@ -26,13 +26,13 @@ ros_build_system = 'catkin'
 #ros_build_system = 'ros_build'
 
 # path to your ROS workspace - path should NOT have '/' at the end.
-#rws = '/home/danying/ros_ws/catkin'
-rws = '/home/blake/Projects/RosNodeAutomator/Ros_ws'
+rws = '/home/danying/ros_ws/catkin'
+#rws = '/home/blake/Projects/RosNodeAutomator/Ros_ws'
 #rws = '/home/danying/ros_ws/rosbuild'
 #rws = '/home/user/Projects/ros_workspace'     # an existing ROS workspace
 
 # name of ROS package
-pkg = 'bh3'
+pkg = 'test_package'
 # package text description
 pkd = 'A first package for testing the ros node generator'
 

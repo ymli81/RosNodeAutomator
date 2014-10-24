@@ -2,7 +2,7 @@
   <description brief="$PKG$">
      $PKG$
   </description>
-  <author>Danying Hu</author>
+  <author>Firstname Lastname</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/$PKG$</url>
