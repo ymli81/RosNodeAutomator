@@ -1,0 +1,9 @@
+#!/bin/bash 
+roscore&   > /dev/null 2>/dev/null
+sleep 1s
+cd $RWS$ 
+catkin_make > /dev/null
+echo "here's my PWD: "
+echo $PWD
+sleep 3s
+source ./devel/setup.bash

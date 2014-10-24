@@ -18,19 +18,29 @@ This file is part of RNA - The Ros Node Automator.
 --------------------------------
 """
 import os, sys
+import subprocess
 from readmsgsrv import ros_files
-from rospackage import ros_package
+from rospackage import ros_package 
 from rosnode import ros_node
 import rospkg
+import text
+
+global first
+firstframe = 1
 
 def frame(title, progbar):  
+  global firstframe
   pbar = "[....................]" 
   progj = int((len(pbar)-2)*progbar)
   p2 = pbar[:progj+1] + '*' + pbar[progj+2:]
-  f1 = "#################################################################"+p2
+  fm1 = "#################################################################"
+  f1  = "################################################################# "+p2
   f2 = "#                   " + title
   f3 = "#"
-  print f1
+  if firstframe==0:
+    print fm1
+  firstframe = 0  
+  print "\n\n"+f1
   print f2
   print f3
 
@@ -48,8 +58,11 @@ for line in initcode:
 ######################## Check ROS workspace #########################
 
 if not os.path.exists(rws):
+  frame ('Ros Workspace Problem:', 0.0)
   print ('  Apparently your ROS workspace '+rws+' does not exist yet.')
-  print ('       ... Please create it or check your param_node.py file')
+  print ('       ... Please create it:                               ')
+  print ('                > catkin_init_workspace                    ')
+  print (' and check your param_node.py file                         ')
   exit(0)
   
   
@@ -61,6 +74,11 @@ my_rospkg = ros_package(pkg,rws,ros_build_system)
 my_rospkg.create_package_folder()
 
 
+frame("Ros Environment: ", 0.2)
+text.rws = rws
+####################### Setup and Check the ROS environment #######################
+
+rosOK = 0
 ## test for proper ROS environment setting of the package using rospkg library ##
 try:
   print 'Testing ros core setup.'
@@ -69,26 +87,56 @@ try:
   path = rp.get_path(pkg)
   print 'Your package path is: '+ path
   print 'Ros system working properly!'
+  rosOK = 1
 except Exception as exc:
   name_of_exception = type(exc).__name__
   print 'Could not "rospack.get_path" of package: '+pkg
   print '  in ROS workspace: '+rws
   print 'Ros exception: '+name_of_exception
-  print '\n\nPlease check your ROS environment'
-  print ' 1) Is roscore running?'
-  print ' 2) did you already create and initialize your package (catkin_create_pkg or roscreate-pkg)'
-  print ' 3) in your Ros-workspace: catkin_make ';
-  print ' 4) in your RNA dir, source <RosWs>/devel/setup.bash'
-  print ''
-  print 'Test your ros setup:'
-  tmpstr = pkg[:3]
-  print ' >rosrun '+tmpstr+'<tab> '
-  print ' should autocomplete to '
-  print ' >rosrun '+pkg
-  exit(0)
+  # here we try to fix up ROS environment using shell commands
+  #    which are in rosstart_bash.txt 
+  print ''' I'm trying to get ROS fixed ...'''
+  with open('templates/rosstart_bash.txt') as ros_script:
+    script = ros_script.readlines() 
+  with open('tmpscript','w') as outfile:
+    for line in script:
+      outfile.write(text.tagsub(line))
+  os.chmod('tmpscript', 0775)
+  print 'running shell commands: > '
+  for l in script:
+    print '     '+l
+  subprocess.call('./tmpscript',shell=True)
+  
+if(not rosOK == 1):
+  # now try one more time after trying to fix ROS
+  try:
+    print 'Round2: Testing ros core setup.'
+    ros_root = rospkg.get_ros_root() 
+    rp = rospkg.RosPack() 
+    path = rp.get_path(pkg)
+    print 'Your package path is: '+ path
+    print 'Ros system working properly!'  
+  except Exception as exc:
+    name_of_exception = type(exc).__name__
+    frame('ROS environment problem', 0.0)
+    print 'Could not "rospack.get_path" of package: '+pkg
+    print '  in ROS workspace: '+rws
+    print 'Ros exception: '+name_of_exception
+    print '\n\nPlease check your ROS environment'
+    print ' 1) Is roscore running?'
+    print ' 2) did you already create and initialize your package (catkin_create_pkg or roscreate-pkg)'
+    print ' 3) in your Ros-workspace: catkin_make ';
+    print ' 4) in your RNA dir, source <RosWs>/devel/setup.bash'
+    print ''
+    print 'How to test your ros setup:'
+    tmpstr = pkg[:3]
+    print ' >rosrun '+tmpstr+'<tab> '
+    print ' should autocomplete to '
+    print ' >rosrun '+pkg
+    exit(0)
 
 
-frame("Node", 0.2)
+frame("Node", 0.25)
 ## Node name ##
 node_name = pkg + '_node'
 node_name = raw_input('Enter your new node name: ['+node_name+ ']: ') or node_name
@@ -287,7 +335,8 @@ while 1:
     srv_name = srv+'_service'
     srv_name = raw_input('Enter the name of your service: default ['+srv_name+']') or srv_name
     cb_name =  srv +'CB'
-    cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
+    # no need to confirm auto generated callback name - save time!
+    #cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
     my_rospkg.srv_flag = 1  # this is supposed to get CMakeLists.txt right for services
     rosnd.add_server(pkgd,srv,srv_name,cb_name)
 
@@ -308,11 +357,12 @@ my_rospkg.add_node(rosnd)
 my_rospkg.update_xmlfile()
 my_rospkg.update_cmake()
 
-if (ros_build_system == 'catkin'):
-  print ("\n\n You have created a "+lang+" node.  Please change to your ROS workspace and type")
+frame('Special Reminder: ', 1.0)
+if ((lang == "C++") and (ros_build_system == 'catkin')):
+  print "\n\n You have created a C++ node.  Please change to your ROS workspace and type"
   print "         > catkin_make "
   print " before testing your node."
-else:
+elif (ros_build_system == 'ros_build'):
   print ("\n\n You have created a "+lang+" node.  Please roscd into your package and type")
   print "         > make "
   print " before testing your node."

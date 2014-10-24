@@ -81,7 +81,7 @@ class ros_package():
         if self.build_system == 'ros_build':
           self.gen_mkfile()  #  'makefile' only needed for ros_build
           self.gen_manifest()
-        else:
+        else:      # catkin case
           self.gen_package_catkin()
 
 # ros_build AND catkin
