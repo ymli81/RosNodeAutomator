@@ -26,8 +26,8 @@ ros_build_system = 'catkin'
 #ros_build_system = 'ros_build'
 
 # path to your ROS workspace - path should NOT have '/' at the end.
-rws = '/home/danying/ros_ws/catkin'
-#rws = '/home/blake/Projects/RosNodeAutomator/Ros_ws'
+#rws = '/home/danying/ros_ws/catkin'
+rws = '/home/blake/Projects/RosNodeAutomator/Ros_ws'
 #rws = '/home/danying/ros_ws/rosbuild'
 #rws = '/home/user/Projects/ros_workspace'     # an existing ROS workspace
 

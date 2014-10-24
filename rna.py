@@ -43,17 +43,32 @@ def frame(title, progbar):
   print "\n\n"+f1
   print f2
   print f3
+  
+#######   collect  command line arg
+#  >./rna.py  rws 
+#if __name__ == "__main__":
+if not len(sys.argv) == 2:
+  print 'usage: ./rna.py rws'
+  print ' rna.py takes exactly one argument: '
+  print '  rws = ROS workspace' 
+  exit(0)
 
-frame("Welcome", 0.0)
-print ('Welcome to ROS Node Automator  *****')
-print ('Please answer a few questions about your new node:')
+# Read in user's settings file
+with open('param_node.py') as pfile: 
+  for line in pfile.readlines():
+    exec (line)
 
-########################### Get System Setup #############################
-with open('param_node.py') as pfile:
-  initcode = pfile.readlines()
-for line in initcode:
-  exec (line)
+# command line (Rna.py) and param_node.py should have
+#   same ROS workspace setting!
+if not text.rws == sys.argv[1]:
+  print 'The ROS workspace in'
+  print 'your param_node.py file does not match Rna.py'
+  print 'ignoring setting in param_node.py: '
+  print text.rws+ ' vs. '+sys.argv[1]
 
+# command line will override param_node file:
+text.rws = sys.argv[1]
+     
 
 ######################## Check ROS workspace #########################
 
@@ -243,7 +258,8 @@ while 1:
     topic = msg+'_topic'
     topic = raw_input('Enter the topic of your message ['+topic+']: ') or topic
     cb_name =  topic+'_cb'
-    cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
+    # we don't really need user confirmation of the callback name
+    #cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
     rosnd.add_subscriber(pkgd,msg,topic,cb_name)
 
   # generate or update files by flag:
@@ -357,15 +373,18 @@ my_rospkg.add_node(rosnd)
 my_rospkg.update_xmlfile()
 my_rospkg.update_cmake()
 
-frame('Special Reminder: ', 1.0)
 if ((lang == "C++") and (ros_build_system == 'catkin')):
-  print "\n\n You have created a C++ node.  Please change to your ROS workspace and type"
+  frame('Special Catkin Reminder: ', 1.0)
+  print "You have created a C++ node.  Please change to your ROS workspace and type"
   print "         > catkin_make "
   print " before testing your node."
 elif (ros_build_system == 'ros_build'):
-  print ("\n\n You have created a "+lang+" node.  Please roscd into your package and type")
+  frame('Special Rosbuild Reminder: ', 1.0)
+  print ("You have created a "+lang+" node.  Please roscd into your package and type")
   print "         > make "
   print " before testing your node."
+
+print "######################  End of RNA  #############################"+'\n\n'
 
 
 
