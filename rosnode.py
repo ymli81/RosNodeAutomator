@@ -249,10 +249,4 @@ if __name__ == '__main__':
 
    #a = ros_node('cc','Python','/home/danying/ROSWorkspace/ros_node_generator/srvtest')
    a = ros_node('cc','Python',rws+'srvtest')
-   #a.add_publisher('pc','test','pusfsd')
-   #a.add_client('srvtest','custom','lunch')
-   #a.add_client('srvtest','custom','dinner')
-   #a.add_server('srvtest','custom','dinner','dinnercallback')
-   #a.add_server('srvtest','custom','lunch','lunchcallback')
-   #a.gen_node_source()
    

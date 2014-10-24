@@ -226,6 +226,10 @@ while 1:
     topic = msg+'_topic'
     topic = raw_input('Enter the topic of your message ['+topic+']: ') or topic
 
+    if create_custom_msg_flag:
+      my_rospkg.edit_custom_msg()
+      my_rospkg.gen_msg(msg)
+
     rosnd.add_publisher(pkgd,msg,topic)
 
   elif direction == 'subscribe':
@@ -246,15 +250,10 @@ while 1:
     cb_name = raw_input('Enter the name of your message callback function: default ['+cb_name+']') or cb_name
     rosnd.add_subscriber(pkgd,msg,topic,cb_name)
 
-  # generate or update files by flag:
-  if create_custom_msg_flag:
-    my_rospkg.edit_custom_msg()
-    my_rospkg.gen_msg(msg)
-  else:
-    if my_rospkg.msg_flag and pkgd == pkg: # we are using a pre-created custom message from the user package
-      my_rospkg.add_msg(msg)
 
- 
+  if not create_custom_msg_flag and my_rospkg.msg_flag and pkgd == pkg: # we are using a pre-created custom message from the user package
+    my_rospkg.add_msg(msg)
+
   my_rospkg.add_dependency(pkgd)
 
 
@@ -322,6 +321,9 @@ while 1:
     srv_name = srv+'_service'
     srv_name = raw_input('Enter the name of your service: default ['+srv_name+']') or srv_name
 
+    if create_custom_srv_flag:
+      my_rospkg.edit_custom_srv()
+      my_rospkg.gen_srv(srv)
     rosnd.add_client(pkgd,srv,srv_name)
 
   elif direction == 'server':
@@ -340,13 +342,9 @@ while 1:
     my_rospkg.srv_flag = 1  # this is supposed to get CMakeLists.txt right for services
     rosnd.add_server(pkgd,srv,srv_name,cb_name)
 
-  # generate or update files by flag:
-  if create_custom_srv_flag:
-    my_rospkg.edit_custom_srv()
-    my_rospkg.gen_srv(srv)
-  else:
-    if my_rospkg.srv_flag and pkgd == pkg: # we use a pre-created custom srv
-      my_rospkg.add_srv(srv)
+
+  if not create_custom_srv_flag and my_rospkg.srv_flag and pkgd == pkg: # we use a pre-created custom srv
+    my_rospkg.add_srv(srv)
 
   my_rospkg.add_dependency(pkgd)
 
@@ -358,7 +356,8 @@ my_rospkg.update_xmlfile()
 my_rospkg.update_cmake()
 
 frame('Special Reminder: ', 1.0)
-if ((lang == "C++") and (ros_build_system == 'catkin')):
+# build system specific instructions
+if (ros_build_system == 'catkin'):
   print "\n\n You have created a C++ node.  Please change to your ROS workspace and type"
   print "         > catkin_make "
   print " before testing your node."
