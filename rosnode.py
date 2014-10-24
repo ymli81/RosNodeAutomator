@@ -102,6 +102,7 @@ class ros_node:
     text.topic = topic
     text.msg = msg
     text.subscriber_obj= msg+'_sub'+str(self.sub_num)
+    self.show_values_msg(pkgd,msg)
     self.msg_sub_list = self.msg_sub_list + text.tagsub(text.subscriber[self.lang])
     self.msg_cb_list = self.msg_cb_list + text.tagsub(text.msg_callback[self.lang])
     self.add_includes_for_msg(pkgd,msg)
@@ -169,16 +170,41 @@ class ros_node:
       text.msv = ''
       for l in msv_list:
         text.msv = l[1]
-        if l[0].startswith('int') or l[0].startswith('float') or l[0].startswith('double'):
+        if l[0].startswith('int') or l[0].startswith('float') or l[0].startswith('uint'):
           text.val = '0'
         elif l[0].startswith('string'):
-          text.val = '"please change this"'
+          text.val = '"please change the string value"'
         elif l[0].startswith('bool'):
           text.val = False
         else:
-          print('Please initiate the variables manually !')
+          print('Please initiate the variable '+ text.msv +' manually !')
         self.msv_init_list = self.msv_init_list + text.tagsub(text.msgs_var_inits[self.lang])
 
+  def show_values_msg(self,pkgd,msg):
+    a = ros_files(pkgd)
+    a.get_package_path()
+    if not a.package_found and self.get_package_name==pkgd:
+      a.set_package_path(self.package_path)
+    a.load_msg(msg)
+    if a.msv_list:
+      msv_list = a.msv_list
+      text.msv = ''
+      text.msv_print_list = ''
+      for l in msv_list:
+        text.msv = l[1]
+        if l[0].startswith('int'):
+          text.var_type = 'i'
+        elif l[0].startswith('uint'):
+          text.var_type = 'u'
+        elif l[0].startswith('float'):
+          text.var_type = 'f'
+        elif l[0].startswith('string'):
+          text.var_type = 's'
+          if self.lang == 'C++':
+            text.msv = l[1]+'.c_str()'
+        else:
+          print('Unable to print the message variable '+ text.msv +', please edit this in the node file!')
+        text.msv_print_list = text.msv_print_list + text.tagsub(text.msgs_var_print[self.lang])
 
   def gen_node_source(self):
     print('start to generate the source file for node '+self.node_name+' in language '+self.lang)

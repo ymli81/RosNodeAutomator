@@ -117,22 +117,25 @@ class ros_files():
 	   print 'Scanning message file: '+msg_filename
            tmp = msgfile.readlines()
          for l in tmp:
-           if l.startswith('#'): print('found a comment line')
-           elif l.startswith('Header'): print('found is a header line')
-           elif l.startswith('\n'): print('found an empty line')
+           if l.startswith('#'): x = 0 #print('found a comment line')
+           elif l.startswith('Header'): x=0 #print('found is a header line')
+           elif l.startswith('\n'): x= 0 #print('found an empty line')
            else:
              tline = l.split(' ')
              ttype = tline[0]
              end = tline[len(tline)-1].find('\n')
              tvar = tline[len(tline)-1][0:end]
              self.msv_list.append([ttype, tvar])
+             print('found a message variable: '+tvar+' in type '+ttype)
     else:
       print('Unable to load the message with name '+msg)
 
   def load_srv(self,srv):
     if self.find_srvs():
        if srv+'.srv' in self.service_list:
-         with open(self.package_path+'/srv/'+ srv+'.srv', 'r') as srvfile:
+         srv_filename = self.package_path+'/srv/'+ srv+'.srv'
+         with open(srv_filename, 'r') as srvfile:
+           print 'Scanning service file: '+srv_filename
            tmp = srvfile.readlines()
          res_flag = 0
          for l in tmp:
@@ -149,8 +152,10 @@ class ros_files():
              tvar = tline[len(tline)-1][0:end]
              if res_flag ==0:
                self.req_list.append([ttype, tvar])
+               print('found a request variable: '+tvar+' in type '+ttype)
              else:
                self.res_list.append([ttype, tvar])
+               print('found a response variable: '+tvar+' in type '+ttype)
     else:
       print('Unable to load the sevice with name '+srv)
 

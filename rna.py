@@ -206,7 +206,7 @@ while 1:
     if my_rospkg.msg_flag and pkgd == pkg: # we are using a pre-created custom message from the user package
       my_rospkg.add_msg(msg)
 
-  # this might be a dependency on own package (check?)
+ 
   my_rospkg.add_dependency(pkgd)
 
 
@@ -309,11 +309,11 @@ my_rospkg.update_xmlfile()
 my_rospkg.update_cmake()
 
 if (ros_build_system == 'catkin'):
-  print ("\n\n You have selected a "+lang+" node.  Please change to your ROS workspace and type")
+  print ("\n\n You have created a "+lang+" node.  Please change to your ROS workspace and type")
   print "         > catkin_make "
   print " before testing your node."
 else:
-  print ("\n\n You have selected a "+lang+" node.  Please roscd into your package and type")
+  print ("\n\n You have created a "+lang+" node.  Please roscd into your package and type")
   print "         > make "
   print " before testing your node."
 

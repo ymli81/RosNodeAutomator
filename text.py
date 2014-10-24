@@ -27,7 +27,7 @@ srv_name = srv = client_obj = server_obj = srv_obj = srv_var = val = arg = ''
 
 ### text_elments
 # node file
-node_name=imp_section = msg_cb_list = msg_sub_list = msg_pub_list = msg_pst_list = msg_obj_list  = msv_init_list = ''
+node_name=imp_section = msg_cb_list = msg_sub_list = msg_pub_list = msg_pst_list = msg_obj_list  = msv_init_list = msv_print_list = ''
 srv_cb_list = srv_adv_list =srv_cli_inits=srv_cli_calls=srv_obj_list=srv_var_list= srv_init_list=''
 # manifest.xml/package.xml
 dependency_list = ''
@@ -45,15 +45,16 @@ srv_var_list = ''
 subscriber = {'Python' : '$SOB$ = rospy.Subscriber("$TPC$", $MSG$, $CLB$)\n  ',
               'C++'    : 'ros::Subscriber $SOB$ = nh.subscribe("$TPC$", 1000, $CLB$);\n',
              }
-msg_callback = {'Python': '''def $CLB$($MSG$): rospy.loginfo("$RNN$: I got message on topic '$TPC$")\n''',
-                'C++':  '''void $CLB$(const $PGD$::$MSG$ConstPtr& $MSG$) {
- 		                   ROS_INFO("$RNN$: I got message on topic '$TPC$'");
- 		                   // how to print the message variables
-                                   // ex 1: string message:
-                                   // std::string msg = $MSG$->{variable name};
-    				   // ROS_INFO("$RNN$:   msg: %s",msg.c_str());
-  		                  }\n
-		                '''
+msg_callback = {'Python': 'def $CLB$($MSG$): \n  rospy.loginfo("$RNN$: I got message on topic $TPC$")\n$PRINT$',
+                'C++':  '''void $CLB$(const $PGD$::$MSG$ConstPtr& msg) {
+ 		             ROS_INFO("$RNN$: I got message on topic '$TPC$'");
+                             $PRINT$
+ 		             // how to print the message variables
+                             // ex 1: string message:
+                             // std::string msg = $MSG$->{variable name};
+    		             // ROS_INFO("$RNN$:   msg: %s",msg.c_str());
+  		             }\n
+		        '''
   	       }
 publisher =  {'Python': '$POB$  = rospy.Publisher("$TPC$",$MSG$, queue_size=1000)\n  ',
               'C++':  'ros::Publisher $POB$ = nh.advertise<$PGD$::$MSG$>("$TPC$", 1000);\n',
@@ -94,12 +95,16 @@ srvs = { 'Python':'$SRO$ = $SRV$()\n  ',
 	     }
 
 msgs_var_inits = {'Python': '$MOB$.$MSV$ = $VAL$\n  ',
-                 'C++': '$MOB$.$MSV$ = $VAL$;\n'
-                }
+                  'C++': '$MOB$.$MSV$ = $VAL$;\n'
+                 }
 srvs_var_inits= {'Python': '$SRO$.$SVV$ = $VAL$\n  ',
                  'C++': '$SRO$.request.$SVV$ = $VAL$;\n'
                 }
 
+# print out message content in a subscriber callback
+msgs_var_print = {'Python': '  rospy.loginfo("$RNN$: $TPC$ Message contains: $MSV$ = %$TYP$", $MSG$.$MSV$)\n', 
+                  'C++': 'ROS_INFO("$RNN$: $TPC$ Message contains: $MSV$ = %$TYP$", msg->$MSV$);\n'
+                 }
 
 # rosbuild manifest and cmakelist
 depend = '<depend package="$PGD$"/>\n  '
@@ -147,6 +152,7 @@ def tagsub(s):
   t = t.replace('$ARG$',arg)              # args for python client call
   t = t.replace('$MSGFILE$',msg_list)
   t = t.replace('$SRVFILE$',srv_list)
+  t = t.replace('$PRINT$',msv_print_list) # print message variables in the subscriber callback
   #t = t.replace('$SPT$', srv_ptr_name)   # service name
   return t
 
