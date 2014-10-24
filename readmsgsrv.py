@@ -117,14 +117,17 @@ class ros_files():
 	   print 'Scanning message file: '+msg_filename
            tmp = msgfile.readlines()
          for l in tmp:
-           if l.startswith('#'): x = 0 #print('found a comment line')
-           elif l.startswith('Header'): x=0 #print('found is a header line')
-           elif l.startswith('\n'): x= 0 #print('found an empty line')
+           if l.startswith('#'): print('found a comment line')
+           elif l.startswith('Header'): print('found is a header line')
+           elif l.startswith('\n'): print('found an empty line')
            else:
              tline = l.split(' ')
              ttype = tline[0]
-             end = tline[len(tline)-1].find('\n')
-             tvar = tline[len(tline)-1][0:end]
+             if '\n' in tline[len(tline)-1]:
+               end = tline[len(tline)-1].find('\n')
+               tvar = tline[len(tline)-1][0:end]
+             else:
+               tvar = tline[len(tline)-1]
              self.msv_list.append([ttype, tvar])
              print('found a message variable: '+tvar+' in type '+ttype)
     else:
@@ -148,8 +151,11 @@ class ros_files():
            else:
              tline = l.split(' ')
              ttype = tline[0]
-             end = tline[len(tline)-1].find('\n')
-             tvar = tline[len(tline)-1][0:end]
+             if '\n' in tline[len(tline)-1]:
+               end = tline[len(tline)-1].find('\n')
+               tvar = tline[len(tline)-1][0:end]
+             else:
+               tvar = tline[len(tline)-1]
              if res_flag ==0:
                self.req_list.append([ttype, tvar])
                print('found a request variable: '+tvar+' in type '+ttype)
@@ -161,12 +167,10 @@ class ros_files():
 
 
 if __name__ == '__main__':
-  a = ros_files('srvtest')
+  a = ros_files('test_package')
   a.get_package_path()
-  a.load_msg('test')
-  a.load_srv('custom')
-  print(a.msv_list)
+  a.load_srv('testsrv')
   print(a.req_list)
-
+  print(a.res_list)
 
 
